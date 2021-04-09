@@ -6,10 +6,10 @@ QA: Matt Ko
 
 ## Project Charter
 ### Vision 
-What’s the best way to experience earth’s natural wonders? Through visiting national parks, of course! From the glaciers of Alaska to the sandstone arches of Utah, national parks provide millions of acres of public lands to explore. This web app is designed to help users find national park trails according to the type of hike they like.
+What’s the best way to experience earth’s natural wonders? Through visiting national parks, of course! From the glaciers of Alaska to the sandstone arches of Utah, national parks provide millions of acres of public lands to explore. However, finding a good trail that is enjoyable and suits your abilities can be time consuming. This web app is designed to help users find national park trails according to the type of hike they like.
 
 ### Mission
-The user will input the length, elevation gain, and other keywords that describe that describe their ideal hike. The app will classify the difficulty of the hike and provide recommendations for hiking trails in national parks. The difficulty will be classified into three groups: easy, moderate, or hard. The app will use content based filtering to suggest trails based on the user’s specifications. The dataset can be accessed [here](https://www.kaggle.com/planejane/national-park-trails).
+The user will input the length, elevation gain, and other keywords that describe their ideal hike. The app will classify the difficulty of the hike and provide recommendations for hiking trails in national parks. The difficulty will be classified into three groups: easy, moderate, or hard. The app will use content based filtering to suggest trails based on the user’s specifications. The goal is to provide relevant hiking trail recommendations and help users understand the difficulty of the hike they’re interested in so they can properly plan ahead. The dataset can be accessed [here](https://www.kaggle.com/planejane/national-park-trails).
 
 ### Success Criteria
 The model will be deployed if the cross validated accuracy of the classification model surpasses 70%. Business success will be evaluated through various measures of user engagement. The app will be considered successful if 50% of new users return to use the app again and the average time spent on the app in a single visit surpasses 3 minutes.
