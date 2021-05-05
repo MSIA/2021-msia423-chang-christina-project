@@ -43,18 +43,6 @@ def upload_file_to_s3(local_path, s3path):
         logger.info('Data uploaded from %s to %s', local_path, s3path)
 
 
-if __name__ == '__main__':
-
-    # log blank access key or secret access key
-    # REMOVE DEFAULT VALUES, SET S3 path as arguments
-    # default='s3://2021-msia423-chang-christina/raw/national-park-trails.csv'
-    # default='data/external/national-park-trails.csv'
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--s3path',
-                        help="Where to load data to in S3")
-    parser.add_argument('--local_path',
-                        help="Where data exists in local")
-    args = parser.parse_args()
-
-    upload_file_to_s3(args.local_path, args.s3path)
+# log blank access key or secret access key
+# default='s3://2021-msia423-chang-christina/raw/national-park-trails.csv'
+# default='data/external/national-park-trails.csv'

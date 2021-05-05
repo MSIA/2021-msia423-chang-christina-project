@@ -26,7 +26,7 @@ class Trails(Base):
     _geoloc = Column(String(100), unique=False, nullable=False)
     popularity = Column(Float, unique=False, nullable=False)
     length = Column(Float, unique=False, nullable=False)
-    elevation_gain = Column(Float, unique = False, nullable = False)
+    elevation_gain = Column(Float, unique=False, nullable=False)
     difficulty_rating = Column(Integer, unique=False, nullable=False)
     route_type = Column(String(100), unique=False, nullable=False)
     visitor_usage = Column(Integer, unique=False, nullable=False)
@@ -49,52 +49,9 @@ def create_db(engine_string: str) -> None:
     Returns: None
 
     """
-    engine = sqlalchemy.create_engine(engine_string)
-
-    Base.metadata.create_all(engine)
-    logger.info("Database created.")
-
-
-# class TrailManager:
-#
-#     def __init__(self, app=None, engine_string=None):
-#         """
-#         Args:
-#             app: Flask - Flask app
-#             engine_string: str - Engine string
-#         """
-#         if app:
-#             self.db = SQLAlchemy(app)
-#             self.session = self.db.session
-#         elif engine_string:
-#             engine = sqlalchemy.create_engine(engine_string)
-#             Session = sessionmaker(bind=engine)
-#             self.session = Session()
-#         else:
-#             raise ValueError("Need either an engine string or a Flask app to initialize")
-#
-#     def close(self) -> None:
-#         """Closes session
-#
-#         Returns: None
-#
-#         """
-#         self.session.close()
-
-    # def add_trail(self, title: str, artist: str, album: str) -> None:
-    #     """Seeds an existing database with additional songs.
-    #
-    #     Args:
-    #         title: str - Title of song
-    #         artist: str - Artist
-    #         album: str - Album title
-    #
-    #     Returns:None
-    #
-    #     """
-    #
-    #     session = self.session
-    #     track = Tracks(artist=artist, album=album, title=title)
-    #     session.add(track)
-    #     session.commit()
-    #     logger.info("%s by %s from album, %s, added to database", title, artist, album)
+    try:
+        engine = sqlalchemy.create_engine(engine_string)
+        Base.metadata.create_all(engine)
+        logger.info("Database created.")
+    except:
+        logger.info("Database cannot be created.")
