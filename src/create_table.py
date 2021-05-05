@@ -55,46 +55,46 @@ def create_db(engine_string: str) -> None:
     logger.info("Database created.")
 
 
-class TrackManager:
+# class TrailManager:
+#
+#     def __init__(self, app=None, engine_string=None):
+#         """
+#         Args:
+#             app: Flask - Flask app
+#             engine_string: str - Engine string
+#         """
+#         if app:
+#             self.db = SQLAlchemy(app)
+#             self.session = self.db.session
+#         elif engine_string:
+#             engine = sqlalchemy.create_engine(engine_string)
+#             Session = sessionmaker(bind=engine)
+#             self.session = Session()
+#         else:
+#             raise ValueError("Need either an engine string or a Flask app to initialize")
+#
+#     def close(self) -> None:
+#         """Closes session
+#
+#         Returns: None
+#
+#         """
+#         self.session.close()
 
-    def __init__(self, app=None, engine_string=None):
-        """
-        Args:
-            app: Flask - Flask app
-            engine_string: str - Engine string
-        """
-        if app:
-            self.db = SQLAlchemy(app)
-            self.session = self.db.session
-        elif engine_string:
-            engine = sqlalchemy.create_engine(engine_string)
-            Session = sessionmaker(bind=engine)
-            self.session = Session()
-        else:
-            raise ValueError("Need either an engine string or a Flask app to initialize")
-
-    def close(self) -> None:
-        """Closes session
-
-        Returns: None
-
-        """
-        self.session.close()
-
-    def add_track(self, title: str, artist: str, album: str) -> None:
-        """Seeds an existing database with additional songs.
-
-        Args:
-            title: str - Title of song
-            artist: str - Artist
-            album: str - Album title
-
-        Returns:None
-
-        """
-
-        session = self.session
-        track = Tracks(artist=artist, album=album, title=title)
-        session.add(track)
-        session.commit()
-        logger.info("%s by %s from album, %s, added to database", title, artist, album)
+    # def add_trail(self, title: str, artist: str, album: str) -> None:
+    #     """Seeds an existing database with additional songs.
+    #
+    #     Args:
+    #         title: str - Title of song
+    #         artist: str - Artist
+    #         album: str - Album title
+    #
+    #     Returns:None
+    #
+    #     """
+    #
+    #     session = self.session
+    #     track = Tracks(artist=artist, album=album, title=title)
+    #     session.add(track)
+    #     session.commit()
+    #     logger.info("%s by %s from album, %s, added to database", title, artist, album)
