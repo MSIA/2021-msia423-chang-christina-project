@@ -6,9 +6,17 @@ __pycache__/
 .idea/
 .log
 .ipynb_checkpoints/
+
+.vscode/
+*.egg-info/
+.env
+.venv
+env/
+venv/
+.mypy_cache/
+
 .mysqlconfig
 .s3config
-
 
 data/*
 !data/sample/
