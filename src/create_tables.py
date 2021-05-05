@@ -1,5 +1,6 @@
 import logging.config
 
+import pandas as pd
 import sqlalchemy
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, Float, MetaData
@@ -49,9 +50,47 @@ def create_db(engine_string: str) -> None:
     Returns: None
 
     """
-    try:
-        engine = sqlalchemy.create_engine(engine_string)
-        Base.metadata.create_all(engine)
-        logger.info("Database created.")
-    except:
-        logger.info("Database cannot be created.")
+    engine = sqlalchemy.create_engine(engine_string)
+    Base.metadata.create_all(engine)
+    logger.info("Database created.")
+
+
+class TrailManager:
+
+    def __init__(self, app=None, engine_string=None):
+        """
+        Args:
+            app: Flask - Flask app
+            engine_string: str - Engine string
+        """
+        if app:
+            self.db = SQLAlchemy(app)
+            self.session = self.db.session
+        elif engine_string:
+            engine = sqlalchemy.create_engine(engine_string)
+            Session = sessionmaker(bind=engine)
+            self.session = Session()
+        else:
+            raise ValueError("Need either an engine string or a Flask app to initialize")
+
+    def close(self) -> None:
+        """Closes session
+        Returns: None
+        """
+        self.session.close()
+
+    def add_dataset(self, path, table_name="trails"):
+        """
+        Inserts data from CSV file into existing database.
+
+        Args:
+            path (str): path to CSV file
+            table_name (str): name of database in SQL database
+
+        Returns: None
+        """
+        session = self.session
+        df = pd.read_csv(path)
+        df.to_sql(name=table_name, con=session, index=False, if_exists="replace")
+        session.commit()
+        logger.info("Contents of %s added to database", path)
