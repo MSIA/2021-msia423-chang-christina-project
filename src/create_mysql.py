@@ -13,7 +13,7 @@ logger.setLevel("INFO")
 Base = declarative_base()
 
 
-class Trails(Base):
+class Hike(Base):
     """Create a data model for the database to be set up for capturing national park trails."""
 
     __tablename__ = 'trails'
@@ -38,24 +38,21 @@ class Trails(Base):
     units = Column(String(10), unique=False, nullable=False)
 
     def __repr__(self):
-        return '<Trail: %r>' % self.name
+        return '<Hike: %r>' % self.name
 
 
 def create_db(engine_string: str) -> None:
     """Create database from provided engine string
-
     Args:
         engine_string: str - Engine string
-
     Returns: None
-
     """
     engine = sqlalchemy.create_engine(engine_string)
     Base.metadata.create_all(engine)
     logger.info("Database created.")
 
 
-class TrailManager:
+class HikeManager:
 
     def __init__(self, app=None, engine_string=None):
         """
