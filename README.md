@@ -96,8 +96,9 @@ increase in the number of users each month for the first six months.
 
 ##### Download the raw data
 
-The dataset is from Kaggle and can be downloaded [here](https://www.kaggle.com/planejane/national-park-trails). A copy
-of the dataset is saved in `data/external/nationa-park-trails.csv`.
+The dataset is from Kaggle and can be downloaded [here](https://www.kaggle.com/planejane/national-park-trails). You 
+will need to create a Kaggle account to access the data. A copy of the dataset is located in 
+`data/external/nationa-park-trails.csv`.
 
 ##### Configure S3 credentials
 
@@ -108,7 +109,7 @@ export AWS_SECRET_ACCESS_KEY="MY_SECRET_ACCESS_KEY"
 
 ##### Build the Docker image
 
-he Dockerfile that defines the image for data acquisition and table generation is in the `app/` folder. To build the
+The Dockerfile that defines the image for data acquisition and table generation is in the `app/` folder. To build the
 image, run from this directory (the root of the repo):
 
 ```bash
@@ -150,7 +151,7 @@ docker run -it \
     -e MYSQL_USER \
     -e MYSQL_PASSWORD \
     -e DATABASE_NAME \
-    hike run.py create_db
+    hike run.py create_db --engine_string <your_engine_string>
 ```
 
 By default, the `python run.py create_db` creates the database locally at `sqlite:///data/trails.db` if no MYSQL
