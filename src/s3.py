@@ -1,4 +1,3 @@
-import argparse
 import logging
 import re
 
@@ -14,7 +13,6 @@ logging.getLogger("asyncio").setLevel(logging.ERROR)
 logging.getLogger("aiobotocore").setLevel(logging.ERROR)
 logging.getLogger("s3fs").setLevel(logging.ERROR)
 
-
 logger = logging.getLogger('s3')
 
 
@@ -29,7 +27,6 @@ def parse_s3(s3path):
 
 
 def upload_file_to_s3(local_path, s3path):
-
     s3bucket, s3_just_path = parse_s3(s3path)
 
     s3 = boto3.resource("s3")
@@ -42,7 +39,5 @@ def upload_file_to_s3(local_path, s3path):
     else:
         logger.info('Data uploaded from %s to %s', local_path, s3path)
 
-
 # log blank access key or secret access key
-# default='s3://2021-msia423-chang-christina/raw/national-park-trails.csv'
-# default='data/external/national-park-trails.csv'
+
