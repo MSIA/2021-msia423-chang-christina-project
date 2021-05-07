@@ -16,8 +16,10 @@ if __name__ == '__main__':
 
     # Sub-parser for uploading data to S3 bucket
     sb_s3 = subparsers.add_parser("s3_upload", description="Upload data to S3")
-    sb_s3.add_argument('--s3path', help="Where to load data to in S3")
-    sb_s3.add_argument('--local_path', help="Where data exists in local")
+    sb_s3.add_argument('--s3path', default='s3://2021-msia423-chang-christina/raw/national-park-trails.csv',
+                       help="Where to load data to in S3")
+    sb_s3.add_argument('--local_path', default='data/external/national-park-trails.csv',
+                       help="Where data exists in local")
 
     # Sub-parser for creating a database
     sb_create = subparsers.add_parser("create_db", description="Create database")
