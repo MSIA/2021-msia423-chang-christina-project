@@ -125,7 +125,7 @@ existing in this directory.
 docker run \
     -e AWS_ACCESS_KEY_ID \
     -e AWS_SECRET_ACCESS_KEY \
-    hike run.py s3_upload --s3path <your_s3_path> --local_path <year_local_path>
+    hike run.py s3_upload --s3path <your_s3_path> --local_path <your_local_path>
 ```
 
 This command uploads a CSV file from the specified `--local_path` to the S3 bucket. By default, the `local_path` is set
