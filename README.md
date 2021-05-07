@@ -96,9 +96,9 @@ increase in the number of users each month for the first six months.
 
 #### Download the raw data
 
-The dataset is from Kaggle and can be downloaded [here](https://www.kaggle.com/planejane/national-park-trails). You 
-will need to create a Kaggle account to access the data. A copy of the dataset is located in 
-`data/external/nationa-park-trails.csv`.
+The dataset is from Kaggle and can be downloaded [here](https://www.kaggle.com/planejane/national-park-trails). You will
+need to create a Kaggle account to access the data. A copy of the dataset is located in
+`data/external/national-park-trails.csv`.
 
 #### Configure S3 credentials
 
@@ -128,6 +128,9 @@ docker run \
     hike run.py s3_upload --s3path <your_s3_path> --local_path <year_local_path>
 ```
 
+This command uploads a CSV file from the specified `--local_path` to the S3 bucket. By default, the `local_path` is set
+to `data/external/national-park-trails.csv`.
+
 ### 2. Initialize the database
 
 #### Configure SQL credentials
@@ -142,7 +145,7 @@ export DATABASE_NAME="MY_DATABASE"
 
 #### Create the SQL database
 
-First connect to the Northwestern VPN, then run:
+Connect to the Northwestern VPN and remember to build the docker image first, then run:
 
 ```bash
 docker run -it \                        
@@ -159,7 +162,7 @@ hostname is provided.
 
 #### Test connection to the database
 
-You should be able to connect to a sql session with the following command (remember to build the docker image first):
+You should be able to connect to a sql session with the following command:
 
 ```bash
 docker run -it --rm \
@@ -170,7 +173,7 @@ docker run -it --rm \
     -p$MYSQL_PASSWORD
 ```
 
-You can query the database using:
+You can query the database by entering:
 
 ```bash
 use msia423_db;
