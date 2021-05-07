@@ -1,14 +1,13 @@
 import logging.config
 
-import pandas as pd
 import sqlalchemy
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, Float, MetaData
-from sqlalchemy.orm import sessionmaker
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import Column, Integer, String, Float
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
 
 logger = logging.getLogger(__name__)
-logger.setLevel("INFO")
+logging.basicConfig(format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s', level=logging.INFO)
 
 Base = declarative_base()
 
@@ -42,20 +41,28 @@ class Hike(Base):
 
 
 def create_db(engine_string: str) -> None:
-    """Create database from provided engine string
+    """Create database from provided engine string.
+
     Args:
-        engine_string: str - Engine string
-    Returns: None
+        engine_string (str): engine string for connecting to the sql database
+
+    Returns:
+        None
     """
-    engine = sqlalchemy.create_engine(engine_string)
-    Base.metadata.create_all(engine)
-    logger.info("Database created.")
+
+    try:
+        engine = sqlalchemy.create_engine(engine_string)
+        Base.metadata.create_all(engine)
+        logger.info("Database successfully created.")
+    except sqlalchemy.exc.OperationalError:
+        logger.error("Database could not be created.")
 
 
 class HikeManager:
 
     def __init__(self, app=None, engine_string=None):
-        """
+        """Manage Flask to SQLAlchemy connection.
+
         Args:
             app: Flask - Flask app
             engine_string: str - Engine string
@@ -69,25 +76,12 @@ class HikeManager:
             self.session = Session()
         else:
             raise ValueError("Need either an engine string or a Flask app to initialize")
+            logger.error("Engine string or Flask app has not been provided.")
 
     def close(self) -> None:
         """Closes session
-        Returns: None
+
+        Returns:
+            None
         """
         self.session.close()
-
-    def add_dataset(self, path, table_name="trails"):
-        """
-        Inserts data from CSV file into existing database.
-
-        Args:
-            path (str): path to CSV file
-            table_name (str): name of database in SQL database
-
-        Returns: None
-        """
-        session = self.session
-        df = pd.read_csv(path)
-        df.to_sql(name=table_name, con=session, index=False, if_exists="replace")
-        session.commit()
-        logger.info("Contents of %s added to database", path)
