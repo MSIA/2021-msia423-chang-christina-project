@@ -1,17 +1,17 @@
 import argparse
-
 import logging.config
-logging.config.fileConfig('config/logging/local.conf')
-#logger = logging.getLogger('penny-lane-pipeline')
 
-from src.s3 import upload_file_to_s3
-from src.create_mysql import HikeManager, create_db
 from config.flaskconfig import SQLALCHEMY_DATABASE_URI
+from src.create_mysql import create_db
+from src.s3 import upload_file_to_s3
+
+logging.config.fileConfig('config/logging/local.conf')
+logger = logging.getLogger(__name__)
 
 if __name__ == '__main__':
 
-    # Add parsers for both creating a database
-    parser = argparse.ArgumentParser(description="Create database")
+    # Create parser
+    parser = argparse.ArgumentParser(description="Create database or upload data to S3")
     subparsers = parser.add_subparsers(dest="subparser_name")
 
     # Sub-parser for uploading data to S3 bucket
@@ -32,6 +32,3 @@ if __name__ == '__main__':
         create_db(args.engine_string)
     else:
         parser.print_help()
-
-
-
