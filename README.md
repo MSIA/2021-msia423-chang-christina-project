@@ -94,20 +94,20 @@ increase in the number of users each month for the first six months.
 
 ### 1. Load data into S3
 
-##### Download the raw data
+#### Download the raw data
 
 The dataset is from Kaggle and can be downloaded [here](https://www.kaggle.com/planejane/national-park-trails). You 
 will need to create a Kaggle account to access the data. A copy of the dataset is located in 
 `data/external/nationa-park-trails.csv`.
 
-##### Configure S3 credentials
+#### Configure S3 credentials
 
 ```bash
 export AWS_ACCESS_KEY_ID="MY_ACCESS_KEY_ID"
 export AWS_SECRET_ACCESS_KEY="MY_SECRET_ACCESS_KEY"
 ```
 
-##### Build the Docker image
+#### Build the Docker image
 
 The Dockerfile that defines the image for data acquisition and table generation is in the `app/` folder. To build the
 image, run from this directory (the root of the repo):
@@ -119,7 +119,7 @@ docker build -f app/Dockerfile -t hike .
 This command builds the Docker image, with the tag `hike`, based on the instructions in `app/Dockerfile` and the files
 existing in this directory.
 
-##### Upload the data into S3
+#### Upload the data into S3
 
 ```bash
 docker run \
@@ -130,7 +130,7 @@ docker run \
 
 ### 2. Initialize the database
 
-##### Configure SQL credentials
+#### Configure SQL credentials
 
 ```bash
 export MYSQL_USER="MY_USERNAME"
@@ -140,7 +140,7 @@ export MYSQL_PORT="MY_PORT"
 export DATABASE_NAME="MY_DATABASE"
 ```
 
-##### Create the SQL database
+#### Create the SQL database
 
 First connect to the Northwestern VPN, then run:
 
@@ -157,7 +157,7 @@ docker run -it \
 By default, the `python run.py create_db` creates the database locally at `sqlite:///data/trails.db` if no MYSQL
 hostname is provided.
 
-##### Test connection to the database
+#### Test connection to the database
 
 You should be able to connect to a sql session with the following command (remember to build the docker image first):
 
