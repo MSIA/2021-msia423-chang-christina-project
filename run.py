@@ -5,7 +5,7 @@ from config.flaskconfig import SQLALCHEMY_DATABASE_URI
 from src.create_mysql import create_db
 from src.s3 import upload_file_to_s3
 
-logging.config.fileConfig('config/logging/local.conf')
+logging.config.fileConfig('config/logging/local.conf', disable_existing_loggers=False)
 logger = logging.getLogger(__name__)
 
 if __name__ == '__main__':
