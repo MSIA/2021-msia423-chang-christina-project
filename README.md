@@ -148,7 +148,7 @@ export DATABASE_NAME="MY_DATABASE"
 Connect to the Northwestern VPN and remember to build the docker image first, then run:
 
 ```bash
-docker run -it \                        
+docker run -it \
     -e MYSQL_HOST \
     -e MYSQL_PORT \
     -e MYSQL_USER \
