@@ -6,8 +6,8 @@ from sqlalchemy import Column, Integer, String, Float
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
+logging.config.fileConfig("config/logging/local.conf")
 logger = logging.getLogger(__name__)
-logging.basicConfig(format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s', level=logging.INFO)
 
 Base = declarative_base()
 
