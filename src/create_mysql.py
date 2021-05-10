@@ -6,7 +6,7 @@ from sqlalchemy import Column, Integer, String, Float
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-logging.config.fileConfig("config/logging/local.conf")
+logging.config.fileConfig('config/logging/local.conf')
 logger = logging.getLogger(__name__)
 
 Base = declarative_base()
@@ -51,11 +51,12 @@ def create_db(engine_string: str) -> None:
     """
 
     try:
+        logger.debug('Connecting to SQLAlchemy.')
         engine = sqlalchemy.create_engine(engine_string)
         Base.metadata.create_all(engine)
-        logger.info("Database successfully created.")
+        logger.info('Database successfully created.')
     except sqlalchemy.exc.OperationalError:
-        logger.error("Database could not be created.")
+        logger.error('Database could not be created.')
 
 
 class HikeManager:
@@ -75,8 +76,8 @@ class HikeManager:
             Session = sessionmaker(bind=engine)
             self.session = Session()
         else:
-            raise ValueError("Need either an engine string or a Flask app to initialize")
-            logger.error("Engine string or Flask app has not been provided.")
+            raise ValueError('Need either an engine string or a Flask app to initialize')
+            logger.error('Engine string or Flask app has not been provided.')
 
     def close(self) -> None:
         """Closes session
