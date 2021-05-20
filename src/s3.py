@@ -4,14 +4,6 @@ import re
 import boto3
 import botocore
 
-logging.getLogger('botocore').setLevel(logging.ERROR)
-logging.getLogger('s3transfer').setLevel(logging.ERROR)
-logging.getLogger('urllib3').setLevel(logging.ERROR)
-logging.getLogger('boto3').setLevel(logging.ERROR)
-logging.getLogger('asyncio').setLevel(logging.ERROR)
-logging.getLogger('aiobotocore').setLevel(logging.ERROR)
-logging.getLogger('s3fs').setLevel(logging.ERROR)
-
 logging.config.fileConfig('config/logging/local.conf')
 logger = logging.getLogger(__name__)
 
