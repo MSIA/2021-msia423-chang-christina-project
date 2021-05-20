@@ -4,7 +4,6 @@ import re
 import boto3
 import botocore
 
-logging.config.fileConfig('config/logging/local.conf')
 logger = logging.getLogger(__name__)
 
 

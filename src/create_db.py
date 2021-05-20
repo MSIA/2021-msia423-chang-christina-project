@@ -6,7 +6,6 @@ from sqlalchemy import Column, Integer, String, Float
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-logging.config.fileConfig('config/logging/local.conf')
 logger = logging.getLogger(__name__)
 
 Base = declarative_base()
