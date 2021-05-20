@@ -56,6 +56,9 @@ def create_db(engine_string: str) -> None:
         logger.info('Database successfully created.')
     except sqlalchemy.exc.OperationalError:
         logger.error('Database could not be created.')
+        logger.warning('Make sure you are connected to Northwestern VPN.')
+    else:
+        logger.info('Database could not be created.')
 
 
 class HikeManager:
@@ -68,9 +71,11 @@ class HikeManager:
             engine_string: str - Engine string
         """
         if app:
+            # Create flask app
             self.db = SQLAlchemy(app)
             self.session = self.db.session
         elif engine_string:
+            # Create SQL alchemy engine and session
             engine = sqlalchemy.create_engine(engine_string)
             Session = sessionmaker(bind=engine)
             self.session = Session()
