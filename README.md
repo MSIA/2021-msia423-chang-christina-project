@@ -61,9 +61,10 @@ increase in the number of users each month for the first six months.
 │   ├── logging/                      <- Configuration of python loggers
 │   ├── flaskconfig.py                <- Configurations for Flask API 
 │
-├── data                              <- Folder that contains data used or generated. Only the external/ and sample/ subdirectories are tracked by git. 
+├── data                              <- Folder that contains data used or generated. Only the external/, sample/, and raw/ subdirectories are tracked by git. 
 │   ├── external/                     <- External data sources, usually reference data,  will be synced with git
 │   ├── sample/                       <- Sample data used for code development and testing, will be synced with git
+│   ├── raw/                          <- Raw data files, will be synced with git
 │
 ├── deliverables/                     <- Any white papers, presentations, final work products that are presented or delivered to a stakeholder 
 │
@@ -98,7 +99,7 @@ increase in the number of users each month for the first six months.
 
 The dataset is from Kaggle and can be downloaded [here](https://www.kaggle.com/planejane/national-park-trails). You will
 need to create a Kaggle account to access the data. A copy of the dataset is located in
-`data/external/national-park-trails.csv`.
+`data/raw/national-park-trails.csv`.
 
 #### Configure S3 credentials
 
@@ -128,8 +129,8 @@ docker run \
     hike run.py s3_upload --s3path <your_s3_path> --local_path <your_local_path>
 ```
 
-This command uploads a CSV file from the specified `--local_path` to the S3 bucket. By default, the `local_path` is set
-to `data/external/national-park-trails.csv`.
+This command uploads a CSV file from the specified `--local_path` to the S3 bucket. The `--s3path` is a required 
+argument. By default, the `local_path` is set to `data/raw/national-park-trails.csv`.
 
 ### 2. Initialize the database
 
@@ -154,7 +155,7 @@ docker run -it \
     -e MYSQL_USER \
     -e MYSQL_PASSWORD \
     -e DATABASE_NAME \
-    hike run.py create_db --engine_string <your_engine_string>
+    hike run.py create_db --engine_string
 ```
 
 By default, the `python run.py create_db` creates the database locally at `sqlite:///data/trails.db` if no MYSQL
