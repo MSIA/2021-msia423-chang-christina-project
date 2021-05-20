@@ -17,6 +17,9 @@ venv/
 
 .mysqlconfig
 .s3config
+pycache/
+*.jar
+*.db
 
 data/*
 !data/sample/
