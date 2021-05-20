@@ -19,9 +19,9 @@ def parse_s3(s3path):
     """
     regex = r's3://([\w._-]+)/([\w./_-]+)'
 
-    m = re.match(regex, s3path)
-    s3bucket = m.group(1)
-    s3path = m.group(2)
+    regex_match = re.match(regex, s3path)
+    s3bucket = regex_match.group(1)
+    s3path = regex_match.group(2)
 
     return s3bucket, s3path
 
