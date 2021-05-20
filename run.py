@@ -2,7 +2,7 @@ import argparse
 import logging.config
 
 from config.flaskconfig import SQLALCHEMY_DATABASE_URI
-from src.create_mysql import create_db
+from src.create_db import create_db
 from src.s3 import upload_file_to_s3
 
 logging.config.fileConfig('config/logging/local.conf', disable_existing_loggers=False)
@@ -16,9 +16,8 @@ if __name__ == '__main__':
 
     # Sub-parser for uploading data to S3 bucket
     sb_s3 = subparsers.add_parser('s3_upload', description='Upload data to S3')
-    sb_s3.add_argument('--s3path', default='s3://2021-msia423-chang-christina/raw/national-park-trails.csv',
-                       help='Where to load data to in S3')
-    sb_s3.add_argument('--local_path', default='./data/external/national-park-trails.csv',
+    sb_s3.add_argument('--s3path', required=True, help='Where to load data to in S3')
+    sb_s3.add_argument('--local_path', default='./data/raw/national-park-trails.csv',
                        help='Where data exists in local')
 
     # Sub-parser for creating a database
