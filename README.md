@@ -4,36 +4,49 @@ Author: Christina Chang
 
 QA: Matt Ko
 
-## Project Charter
-### Vision 
-What’s the best way to experience earth’s natural wonders? Through visiting national parks, of course! From the glaciers of Alaska to the sandstone arches of Utah, national parks provide millions of acres of public lands to explore. However, finding a good trail that is enjoyable and suits your abilities can be time consuming. This web app is designed to help users find national park trails according to the type of hike they like.
-
-### Mission
-The user will input the length, elevation gain, state, and other keywords that describe their ideal hike. The app will classify the difficulty of the hike and provide recommendations for hiking trails in national parks. The difficulty will be classified into three groups: easy, moderate, or hard. The app will use content based filtering to suggest trails based on the user’s specifications. The goal is to provide relevant hiking trail recommendations and help users understand the difficulty of the hike they’re interested in so they can properly plan ahead. The dataset can be accessed [here](https://www.kaggle.com/planejane/national-park-trails).
-
-### Success Criteria
-The model will be deployed if the cross validated accuracy of the classification model surpasses 70%. Business success will be evaluated through various measures of user engagement. The app will be considered successful if 50% of new users return to use the app again, the average time spent on the app in a single visit surpasses 3 minutes, and there is a 10% increase in the number of users each month for the first six months.
-
 <!-- toc -->
 
+- [Project charter](#project-charter)
 - [Directory structure](#directory-structure)
 - [Running the app](#running-the-app)
-  * [1. Initialize the database](#1-initialize-the-database)
-    + [Create the database with a single song](#create-the-database-with-a-single-song)
-    + [Adding additional songs](#adding-additional-songs)
-    + [Defining your engine string](#defining-your-engine-string)
-      - [Local SQLite database](#local-sqlite-database)
-  * [2. Configure Flask app](#2-configure-flask-app)
-  * [3. Run the Flask app](#3-run-the-flask-app)
-- [Running the app in Docker](#running-the-app-in-docker)
-  * [1. Build the image](#1-build-the-image)
-  * [2. Run the container](#2-run-the-container)
-  * [3. Kill the container](#3-kill-the-container)
-  * [Workaround for potential Docker problem for Windows.](#workaround-for-potential-docker-problem-for-windows)
+    * [1. Load data into S3](#1-load-data-into-s3)
+        + [Download the raw data](#download-the-raw-data)
+        + [Configure S3 credentials](#configure-s3-credentials)
+        + [Build the Docker image](#build-the-docker-image)
+        + [Upload the data into S3](#upload-the-data-into-s3)
+    * [2. Initialize the database](#2-initialize-the-database)
+        + [Configure SQL credentials](#configure-sql-credentials)
+        + [Create the SQL database](#create-the-sql-database)
+        + [Test connection to the database](#test-connection-to-the-database)
 
 <!-- tocstop -->
 
-## Directory structure 
+## Project charter
+
+### Vision
+
+What’s the best way to experience earth’s natural wonders? Through visiting national parks, of course! From the glaciers
+of Alaska to the sandstone arches of Utah, national parks provide millions of acres of public lands to explore. However,
+finding a good trail that is enjoyable and suits your abilities can be time consuming. This web app is designed to help
+users find national park trails according to the type of hike they like.
+
+### Mission
+
+The user will input the length, elevation gain, state, and other keywords that describe their ideal hike. The app will
+classify the difficulty of the hike and provide recommendations for hiking trails in national parks. The difficulty will
+be classified into three groups: easy, moderate, or hard. The app will use content based filtering to suggest trails
+based on the user’s specifications. The goal is to provide relevant hiking trail recommendations and help users
+understand the difficulty of the hike they’re interested in so they can properly plan ahead. The dataset can be
+accessed [here](https://www.kaggle.com/planejane/national-park-trails).
+
+### Success criteria
+
+The model will be deployed if the cross validated accuracy of the classification model surpasses 70%. Business success
+will be evaluated through various measures of user engagement. The app will be considered successful if 50% of new users
+return to use the app again, the average time spent on the app in a single visit surpasses 3 minutes, and there is a 10%
+increase in the number of users each month for the first six months.
+
+## Directory structure
 
 ```
 ├── README.md                         <- You are here
@@ -48,9 +61,10 @@ The model will be deployed if the cross validated accuracy of the classification
 │   ├── logging/                      <- Configuration of python loggers
 │   ├── flaskconfig.py                <- Configurations for Flask API 
 │
-├── data                              <- Folder that contains data used or generated. Only the external/ and sample/ subdirectories are tracked by git. 
+├── data                              <- Folder that contains data used or generated. Only the external/, sample/, and raw/ subdirectories are tracked by git. 
 │   ├── external/                     <- External data sources, usually reference data,  will be synced with git
 │   ├── sample/                       <- Sample data used for code development and testing, will be synced with git
+│   ├── raw/                          <- Raw data files, will be synced with git
 │
 ├── deliverables/                     <- Any white papers, presentations, final work products that are presented or delivered to a stakeholder 
 │
@@ -78,142 +92,104 @@ The model will be deployed if the cross validated accuracy of the classification
 ```
 
 ## Running the app
-### 1. Initialize the database 
 
-#### Create the database 
-To create the database in the location configured in `config.py` run: 
+### 1. Load data into S3
 
-`python run.py create_db --engine_string=<engine_string>`
+#### Download the raw data
 
-By default, `python run.py create_db` creates a database at `sqlite:///data/tracks.db`.
+The dataset is from Kaggle and can be downloaded [here](https://www.kaggle.com/planejane/national-park-trails). You will
+need to create a Kaggle account to access the data. A copy of the dataset is located in
+`data/raw/national-park-trails.csv`.
 
-#### Adding songs 
-To add songs to the database:
-
-`python run.py ingest --engine_string=<engine_string> --artist=<ARTIST> --title=<TITLE> --album=<ALBUM>`
-
-By default, `python run.py ingest` adds *Minor Cause* by Emancipator to the SQLite database located in `sqlite:///data/tracks.db`.
-
-#### Defining your engine string 
-A SQLAlchemy database connection is defined by a string with the following format:
-
-`dialect+driver://username:password@host:port/database`
-
-The `+dialect` is optional and if not provided, a default is used. For a more detailed description of what `dialect` and `driver` are and how a connection is made, you can see the documentation [here](https://docs.sqlalchemy.org/en/13/core/engines.html). We will cover SQLAlchemy and connection strings in the SQLAlchemy lab session on 
-##### Local SQLite database 
-
-A local SQLite database can be created for development and local testing. It does not require a username or password and replaces the host and port with the path to the database file: 
-
-```python
-engine_string='sqlite:///data/tracks.db'
-
-```
-
-The three `///` denote that it is a relative path to where the code is being run (which is from the root of this directory).
-
-You can also define the absolute path with four `////`, for example:
-
-```python
-engine_string = 'sqlite://///Users/cmawer/Repos/2020-MSIA423-template-repository/data/tracks.db'
-```
-
-
-### 2. Configure Flask app 
-
-`config/flaskconfig.py` holds the configurations for the Flask app. It includes the following configurations:
-
-```python
-DEBUG = True  # Keep True for debugging, change to False when moving to production 
-LOGGING_CONFIG = "config/logging/local.conf"  # Path to file that configures Python logger
-HOST = "0.0.0.0" # the host that is running the app. 0.0.0.0 when running locally 
-PORT = 5000  # What port to expose app on. Must be the same as the port exposed in app/Dockerfile 
-SQLALCHEMY_DATABASE_URI = 'sqlite:///data/tracks.db'  # URI (engine string) for database that contains tracks
-APP_NAME = "penny-lane"
-SQLALCHEMY_TRACK_MODIFICATIONS = True 
-SQLALCHEMY_ECHO = False  # If true, SQL for queries made will be printed
-MAX_ROWS_SHOW = 100 # Limits the number of rows returned from the database 
-```
-
-### 3. Run the Flask app 
-
-To run the Flask app, run: 
+#### Configure S3 credentials
 
 ```bash
-python app.py
+export AWS_ACCESS_KEY_ID="MY_ACCESS_KEY_ID"
+export AWS_SECRET_ACCESS_KEY="MY_SECRET_ACCESS_KEY"
 ```
 
-You should now be able to access the app at http://0.0.0.0:5000/ in your browser.
+#### Build the Docker image
 
-## Running the app in Docker 
-
-### 1. Build the image 
-
-The Dockerfile for running the flask app is in the `app/` folder. To build the image, run from this directory (the root of the repo): 
+The Dockerfile that defines the image for data acquisition and table generation is in the `app/` folder. To build the
+image, run from this directory (the root of the repo):
 
 ```bash
- docker build -f app/Dockerfile -t pennylane .
+docker build -f app/Dockerfile -t hike .
 ```
 
-This command builds the Docker image, with the tag `pennylane`, based on the instructions in `app/Dockerfile` and the files existing in this directory.
- 
-### 2. Run the container 
+This command builds the Docker image, with the tag `hike`, based on the instructions in `app/Dockerfile` and the files
+existing in this directory.
 
-To run the app, run from this directory: 
-
-```bash
-docker run -p 5000:5000 --name test pennylane
-```
-You should now be able to access the app at http://0.0.0.0:5000/ in your browser.
-
-This command runs the `pennylane` image as a container named `test` and forwards the port 5000 from container to your laptop so that you can access the flask app exposed through that port. 
-
-If `PORT` in `config/flaskconfig.py` is changed, this port should be changed accordingly (as should the `EXPOSE 5000` line in `app/Dockerfile`)
-
-### 3. Kill the container 
-
-Once finished with the app, you will need to kill the container. To do so: 
+#### Upload the data into S3
 
 ```bash
-docker kill test 
+docker run \
+    -e AWS_ACCESS_KEY_ID \
+    -e AWS_SECRET_ACCESS_KEY \
+    hike run.py s3_upload --s3path <your_s3_path> --local_path <your_local_path>
 ```
 
-where `test` is the name given in the `docker run` command.
+This command uploads a CSV file from the specified `--local_path` to the S3 bucket. The `--s3path` is a required 
+argument. By default, the `local_path` is set to `data/raw/national-park-trails.csv`.
 
-### Example using `python3` as an entry point
+### 2. Initialize the database
 
-We have included another example of a Dockerfile, `app/Dockerfile_python` that has `python3` as the entry point such that when you run the image as a container, the command `python3` is run, followed by the arguments given in the `docker run` command after the image name. 
-
-To build this image: 
+#### Configure SQL credentials
 
 ```bash
- docker build -f app/Dockerfile_python -t pennylane .
+export MYSQL_USER="MY_USERNAME"
+export MYSQL_PASSWORD="MY_PASSWORD"
+export MYSQL_HOST="MY_HOST"
+export MYSQL_PORT="MY_PORT"
+export DATABASE_NAME="MY_DATABASE"
 ```
 
-then run the `docker run` command: 
+#### Create the SQL database
+
+Connect to the Northwestern VPN and remember to build the docker image first, then run:
 
 ```bash
-docker run -p 5000:5000 --name test pennylane app.py
+docker run -it \
+    -e MYSQL_HOST \
+    -e MYSQL_PORT \
+    -e MYSQL_USER \
+    -e MYSQL_PASSWORD \
+    -e DATABASE_NAME \
+    hike run.py create_db --engine_string
 ```
 
-The new image defines the entry point command as `python3`. Building the sample PennyLane image this way will require initializing the database prior to building the image so that it is copied over, rather than created when the container is run. Therefore, please **do the step [Create the database with a single song](#create-the-database-with-a-single-song) above before building the image**.
+By default, the `python run.py create_db` creates the database locally at `sqlite:///data/trails.db` if no MYSQL
+hostname is provided.
 
-# Testing
+#### Test connection to the database
 
-From within the Docker container, the following command should work to run unit tests when run from the root of the repository: 
-
-```bash
-python -m pytest
-``` 
-
-Using Docker, run the following, if the image has not been built yet:
+You should be able to connect to a sql session with the following command:
 
 ```bash
- docker build -f app/Dockerfile_python -t pennylane .
+docker run -it --rm \
+    mysql:5.7.33 \
+    mysql \
+    -h$MYSQL_HOST \
+    -u$MYSQL_USER \
+    -p$MYSQL_PASSWORD
 ```
 
-To run the tests, run: 
+You can query the database by entering:
 
 ```bash
- docker run penny -m pytest
+use msia423_db;
 ```
- 
+
+Now enter queries. For instance, view the `trails` table:
+
+```bash
+SELECT * FROM trails;
+```
+
+You can also see other tables in the database using:
+
+```bash
+show tables;
+```
+
+

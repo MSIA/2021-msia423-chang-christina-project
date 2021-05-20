@@ -7,9 +7,23 @@ __pycache__/
 .log
 .ipynb_checkpoints/
 
+.vscode/
+*.egg-info/
+.env
+.venv
+env/
+venv/
+.mypy_cache/
+
+.mysqlconfig
+.s3config
+pycache/
+*.jar
+*.db
 
 data/*
 !data/sample/
 !data/external/
+!data/raw/
 config/local
 !.gitkeep
