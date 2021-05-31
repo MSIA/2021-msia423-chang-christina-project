@@ -49,3 +49,18 @@ def upload_file_to_s3(local_path, s3path):
         logger.error("Please provide a valid S3 bucket name.")
     else:
         logger.info('Data uploaded from %s to %s', local_path, s3path)
+
+
+def download_file_from_s3(local_path, s3path):
+
+    s3bucket, s3_just_path = parse_s3(s3path)
+
+    s3 = boto3.resource("s3")
+    bucket = s3.Bucket(s3bucket)
+
+    try:
+        bucket.download_file(s3_just_path, local_path)
+    except botocore.exceptions.NoCredentialsError:
+        logger.error('Please provide AWS credentials via AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY env variables.')
+    else:
+        logger.info('Data downloaded from %s to %s', s3path, local_path)

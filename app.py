@@ -19,13 +19,26 @@ logger.debug('Web app log')
 # from src.add_songs import Tracks, TrackManager
 # track_manager = TrackManager(app)
 
-@app.route('/')
-def hello_world():
-    return 'hello'
+@app.route('/', methods=['GET', 'POST'])
+def home():
+    if request.method == 'GET':
+        try:
+            # LOAD MODEL
+            return render_template('index.html')
+        except:
+            return render_template('error.html')
 
-@app.route('/my_template', methods =['GET'])
-def my_template():
-    return render_template('index.html')
+    if request.method == 'POST':
+        length = request.form['length']
+        elevation_gain = request.form['elevation_gain']
+        route_type = request.form['route_type']
+        url_for_post = url_for('my_template', length=length, elevation_gain=elevation_gain, route_type=route_type)
+        return redirect(url_for_post)
+
+@app.route('/my_template/<length>/<elevation_gain>/<route_type>', methods=['GET', 'POST'])
+def my_template(length, elevation_gain, route_type):
+    #return render_template('index.html')
+    return str(length) + str(elevation_gain) + route_type
 
 # def index():
 #     """Main view that lists songs in the database.
