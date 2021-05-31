@@ -90,3 +90,36 @@ class HikeManager:
             None
         """
         self.session.close()
+
+    def add_trail(self,
+                  trail_id: int,
+                  name: str,
+                  area_name: str,
+                  city_name: str,
+                  state_name: str,
+                  country_name: str,
+                  _geoloc: str,
+                  popularity: float,
+                  length: float,
+                  elevation_gain: float,
+                  difficulty_rating: int,
+                  route_type: str,
+                  visitor_usage: int,
+                  avg_rating: float,
+                  num_reviews: int,
+                  features: str,
+                  activities: str,
+                  units: str) -> None:
+        """Seeds an existing database with additional songs.
+        Args:
+            title: str - Title of song
+            artist: str - Artist
+            album: str - Album title
+        Returns:None
+        """
+
+        session = self.session
+        trail = Trails(artist=artist, album=album, title=title)
+        session.add(track)
+        session.commit()
+        logger.info("%s by %s from album, %s, added to database", title, artist, album)
