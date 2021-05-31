@@ -16,45 +16,53 @@ logger = logging.getLogger(app.config["APP_NAME"])
 logger.debug('Web app log')
 
 # Initialize the database session
-from src.add_songs import Tracks, TrackManager
-track_manager = TrackManager(app)
+# from src.add_songs import Tracks, TrackManager
+# track_manager = TrackManager(app)
 
 @app.route('/')
-def index():
-    """Main view that lists songs in the database.
+def hello_world():
+    return 'hello'
 
-    Create view into index page that uses data queried from Track database and
-    inserts it into the msiapp/templates/index.html template.
+@app.route('/my_template', methods =['GET'])
+def my_template():
+    return render_template('index.html')
 
-    Returns: rendered html template
+# def index():
+#     """Main view that lists songs in the database.
+#
+#     Create view into index page that uses data queried from Track database and
+#     inserts it into the msiapp/templates/index.html template.
+#
+#     Returns: rendered html template
+#
+#     """
+#
+#     try:
+#         tracks = track_manager.session.query(Tracks).limit(app.config["MAX_ROWS_SHOW"]).all()
+#         logger.debug("Index page accessed")
+#         return render_template('index.html', tracks=tracks)
+#     except:
+#         traceback.print_exc()
+#         logger.warning("Not able to display tracks, error page returned")
+#         return render_template('error.html')
 
-    """
 
-    try:
-        tracks = track_manager.session.query(Tracks).limit(app.config["MAX_ROWS_SHOW"]).all()
-        logger.debug("Index page accessed")
-        return render_template('index.html', tracks=tracks)
-    except:
-        traceback.print_exc()
-        logger.warning("Not able to display tracks, error page returned")
-        return render_template('error.html')
-
-
-@app.route('/add', methods=['POST'])
-def add_entry():
-    """View that process a POST with new song input
-
-    :return: redirect to index page
-    """
-
-    try:
-        track_manager.add_track(artist=request.form['artist'], album=request.form['album'], title=request.form['title'])
-        logger.info("New song added: %s by %s", request.form['title'], request.form['artist'])
-        return redirect(url_for('index'))
-    except:
-        logger.warning("Not able to display tracks, error page returned")
-        return render_template('error.html')
+# @app.route('/add', methods=['POST'])
+# def add_entry():
+#     """View that process a POST with new song input
+#
+#     :return: redirect to index page
+#     """
+#
+#     try:
+#         track_manager.add_track(artist=request.form['artist'], album=request.form['album'], title=request.form['title'])
+#         logger.info("New song added: %s by %s", request.form['title'], request.form['artist'])
+#         return redirect(url_for('index'))
+#     except:
+#         logger.warning("Not able to display tracks, error page returned")
+#         return render_template('error.html')
 
 
 if __name__ == '__main__':
-    app.run(debug=app.config["DEBUG"], port=app.config["PORT"], host=app.config["HOST"])
+    #app.run(debug=app.config["DEBUG"], port=app.config["PORT"], host=app.config["HOST"])
+    app.run()

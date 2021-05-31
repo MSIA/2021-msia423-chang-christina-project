@@ -7,7 +7,7 @@
 
 <body>
     <h3>
-         <a href = "{{ url_for('index') }}">Penny Lane Music Recommender</a>
+         <a href = "{{ url_for('my_template') }}">Penny Lane Music Recommender</a>
     </h3>
 
     <hr/>
@@ -30,11 +30,21 @@
             {% endfor %}
          </tbody>
       </table>
-      <form action="{{ url_for('add_entry') }}" method=post class=add-entry>
+      <form action="{{ url_for('hello_world') }}" method=post class=add-entry>
       <dl>
-        <input type=text size=15 name=title placeholder="Title">
-        <input type=text size=15 name=artist placeholder="Artist">
-        <input type=text size=15 name=album placeholder="Album">
+        <label for="length">Length:</label>
+        <input type=text size=15 name=length placeholder="Length">
+        <br />
+        <label for="length">Length:</label>
+        <input type=text size=15 name=elevation_gain placeholder="Elevation Gain">
+        <br />
+        <label for="length">Length:</label>
+        <select name="route_type", id="route_type">
+            <option value="out and back">out_and_back</option>
+            <option value="point to point">point_to_point</option>
+            <option value="loop">loop</option>
+        </select>
+        <br />
         <input type=submit value=Add>
       </dl>
     </form>
