@@ -25,5 +25,6 @@ data/*
 !data/sample/
 !data/external/
 !data/raw/
+!data/models/
 config/local
 !.gitkeep
