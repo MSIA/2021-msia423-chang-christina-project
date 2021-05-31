@@ -1,0 +1,5 @@
+Mean CV score: 0.823Var CV score  0.026
+          easy  moderate  hard
+easy       141        28     1
+moderate    29       241    25
+hard         0        33   164
