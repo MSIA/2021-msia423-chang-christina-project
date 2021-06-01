@@ -5,6 +5,12 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Column, Integer, String, Float
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+import pandas as pd
+
+from sqlalchemy import create_engine
+
+import warnings
+from sqlalchemy import exc as sa_exc
 
 logger = logging.getLogger(__name__)
 
@@ -57,8 +63,22 @@ def create_db(engine_string: str) -> None:
     except sqlalchemy.exc.OperationalError:
         logger.error('Database could not be created.')
         logger.warning('Make sure you are connected to Northwestern VPN.')
-    else:
-        logger.info('Database could not be created.')
+    # else:
+    #     logger.info('Database could not be created.')
+
+
+def insert_all(engine_string, data_path):
+    """insert csv in sql"""
+    engine = create_engine(engine_string, echo=False)
+
+    # Read data as df
+    with open(data_path, 'r', encoding='utf-8') as file:
+        df = pd.read_csv(file, index_col=0)
+
+    #  Warning: (1366, "Incorrect string value: '\\xC4\\x81ulu ...' for column 'name' at row 365")
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        df.to_sql('trails', con=engine, if_exists='replace')
 
 
 class HikeManager:
@@ -119,7 +139,24 @@ class HikeManager:
         """
 
         session = self.session
-        trail = Trails(artist=artist, album=album, title=title)
-        session.add(track)
+        trail = Hike(trail_id=trail_id,
+                     name=name,
+                     area_name=area_name,
+                     city_name=city_name,
+                     state_name=state_name,
+                     country_name=country_name,
+                     _geoloc=_geoloc,
+                     popularity=popularity,
+                     length=length,
+                     elevation_gain=elevation_gain,
+                     difficulty_rating=difficulty_rating,
+                     route_type=route_type,
+                     visitor_usage=visitor_usage,
+                     avg_rating=avg_rating,
+                     num_reviews=num_reviews,
+                     features=features,
+                     activities=activities,
+                     units=units)
+        session.add(trail)
         session.commit()
-        logger.info("%s by %s from album, %s, added to database", title, artist, album)
+        # logger.info("%s by %s from album, %s, added to database", title, artist, album)
