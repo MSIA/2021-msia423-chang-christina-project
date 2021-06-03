@@ -35,13 +35,18 @@ def home():
         length = request.form['length']
         elevation_gain = request.form['elevation_gain']
         route_type = request.form['route_type']
-        url_for_post = url_for('my_template', length=length, elevation_gain=elevation_gain, route_type=route_type)
+        # features = request.form['features']
+        # activities = request.form['activities']
+        features = request.form.getlist('features')
+        activities = request.form.getlist('activities')
+        url_for_post = url_for('my_template', length=length, elevation_gain=elevation_gain, route_type=route_type,
+                               features=features, activities=activities)
         return redirect(url_for_post)
 
 
-@app.route('/my_template/<length>/<elevation_gain>/<route_type>', methods=['GET', 'POST'])
-def my_template(length, elevation_gain, route_type):
-    return str(length) + str(elevation_gain) + route_type
+@app.route('/my_template/<length>/<elevation_gain>/<route_type>/<features>/<activities>', methods=['GET', 'POST'])
+def my_template(length, elevation_gain, route_type, features, activities):
+    return str(length) + str(elevation_gain) + route_type + features + activities
     # return render_template('index.html')
 
 

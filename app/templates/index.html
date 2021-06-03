@@ -7,7 +7,7 @@
 
 <body>
     <h3>
-         <a href = "{{ url_for('my_template',length='0',elevation_gain='0',route_type='route') }}">Penny Lane Music Recommender</a>
+         <a href = "{{ url_for('my_template',length='0',elevation_gain='0',route_type='route',features='features',activities='activities') }}">Penny Lane Music Recommender</a>
     </h3>
 
     <hr/>
@@ -35,8 +35,10 @@
         <label for="length">Length:</label>
         <input type=text size=15 name=length placeholder="Length">
         <br />
+        <br />
         <label for="elevation_gain">Elevation Gain:</label>
         <input type=text size=15 name=elevation_gain placeholder="Elevation Gain">
+        <br />
         <br />
         <label for="route_type">Route Type:</label>
         <select name="route_type", id="route_type">
@@ -44,6 +46,25 @@
             <option value="point_to_point">point to point</option>
             <option value="loop">loop</option>
         </select>
+        <br />
+        <br />
+        <label for="features">Features:</label>
+        <br />
+        <select name="features", id="features" multiple>
+            <option value="ada">ada</option>
+            <option value="beach">beach</option>
+            <option value="cave">cave</option>
+        </select>
+        <br />
+        <br />
+        <label for="activities">Activities:</label>
+        <br />
+        <select name="activities", id="activities" multiple>
+            <option value="bike_touring">bike touring</option>
+            <option value="birding">birding</option>
+            <option value="camping">camping</option>
+        </select>
+        <br />
         <br />
         <input type=submit value=Add>
       </dl>
