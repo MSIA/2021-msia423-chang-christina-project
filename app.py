@@ -19,14 +19,17 @@ logger.debug('Web app log')
 # from src.add_songs import Tracks, TrackManager
 # track_manager = TrackManager(app)
 
+
 @app.route('/', methods=['GET', 'POST'])
 def home():
     if request.method == 'GET':
         try:
             # LOAD MODEL
             return render_template('index.html')
+            logger.info("Index page accessed")
         except:
             return render_template('error.html')
+            logger.warning('Error page')
 
     if request.method == 'POST':
         length = request.form['length']
@@ -35,10 +38,18 @@ def home():
         url_for_post = url_for('my_template', length=length, elevation_gain=elevation_gain, route_type=route_type)
         return redirect(url_for_post)
 
+
 @app.route('/my_template/<length>/<elevation_gain>/<route_type>', methods=['GET', 'POST'])
 def my_template(length, elevation_gain, route_type):
-    #return render_template('index.html')
     return str(length) + str(elevation_gain) + route_type
+    # return render_template('index.html')
+
+
+if __name__ == '__main__':
+    app.run(debug=app.config["DEBUG"], port=app.config["PORT"], host=app.config["HOST"])
+    # app.run(debug=app.config["DEBUG"], port=app.config["PORT"], host=app.config["HOST"])
+
+
 
 # def index():
 #     """Main view that lists songs in the database.
@@ -74,8 +85,3 @@ def my_template(length, elevation_gain, route_type):
 #     except:
 #         logger.warning("Not able to display tracks, error page returned")
 #         return render_template('error.html')
-
-
-if __name__ == '__main__':
-    #app.run(debug=app.config["DEBUG"], port=app.config["PORT"], host=app.config["HOST"])
-    app.run()
