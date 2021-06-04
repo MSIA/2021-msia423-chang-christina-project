@@ -28,4 +28,4 @@ data/*
 !data/models/
 config/local
 !.gitkeep
-!copilot/
+copilot/*
