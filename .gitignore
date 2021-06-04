@@ -25,7 +25,7 @@ data/*
 !data/sample/
 !data/external/
 !data/raw/
-!data/models/
+data/models/*
 config/local
 !.gitkeep
 copilot/*
