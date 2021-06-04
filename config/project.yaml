@@ -1,0 +1,28 @@
+clean:
+  clean:
+    raw_data_path: data/raw/national-park-trails.csv
+    length_col: length
+    digits: 2
+    name_col: name
+    drop_str: closed
+    clean_path: data/models/df_cleaned.csv
+featurize:
+  featurize:
+    clean_data_path: data/models/df_cleaned.csv
+    trail_id: trail_id
+    tag_features:
+      - features
+      - activities
+    non_tag_features:
+      - length
+      - elevation_gain
+      - route_type
+    response:
+    features_name: features
+    features_ls_path: data/models/features.txt
+    activities_name: activities
+    activities_ls_path: data/models/activities.txt
+    cut_labels:
+    cut_bins:
+    num_col_name:
+    bin_col_name:
