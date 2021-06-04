@@ -2,7 +2,7 @@ import argparse
 import logging.config
 
 from config.flaskconfig import SQLALCHEMY_DATABASE_URI
-from src.create_db import create_db, insert_all
+from src.create_db import create_db#, insert_all
 from src.s3 import upload_file_to_s3, download_file_from_s3
 
 logging.config.fileConfig('config/logging/local.conf', disable_existing_loggers=False)
@@ -39,6 +39,6 @@ if __name__ == '__main__':
         download_file_from_s3(args.local_path, args.s3path)
     elif sp_used == 'create_db':
         create_db(args.engine_string)
-        insert_all(args.engine_string, args.data_path)
+        #insert_all(args.engine_string, args.data_path)
     else:
         parser.print_help()
