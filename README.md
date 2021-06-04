@@ -192,4 +192,10 @@ You can also see other tables in the database using:
 show tables;
 ```
 
-
+### 3. Docker commands (rewrite)
+```bash
+docker build -f app/Dockerfile -t hike .
+docker run --mount type=bind,source="$(pwd)/data/",target=/app/data/ hike run.py clean
+docker run --mount type=bind,source="$(pwd)/data/",target=/app/data/ hike run.py featurize
+docker run --mount type=bind,source="$(pwd)/",target=/app/ hike run.py model
+```

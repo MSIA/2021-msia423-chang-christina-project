@@ -7,11 +7,12 @@ import logging
 import pandas as pd
 import yaml
 
-import src.clean as clean
-
 from config.flaskconfig import SQLALCHEMY_DATABASE_URI
-from src.create_db import create_db
 from src.s3 import upload_file_to_s3, download_file_from_s3
+from src.create_db import create_db
+import src.clean as clean
+import src.featurize as featurize
+import src.model as model
 
 logging.config.fileConfig('config/logging/local.conf', disable_existing_loggers=False)
 logger = logging.getLogger(__name__)
@@ -41,6 +42,12 @@ sb_create.add_argument('--data_path',  help='Insert data into database')
 # Sub-parser for cleaning data
 sb_clean = subparsers.add_parser('clean', description='Clean data')
 
+# Sub-parser for creating features
+sb_featurize = subparsers.add_parser('featurize', description='Create features')
+
+# Sub-parser for creating features
+sb_model = subparsers.add_parser('model', description='Run model')
+
 # Get parser
 args = parser.parse_args()
 sp_used = args.subparser_name
@@ -62,5 +69,9 @@ if __name__ == '__main__':
         create_db(args.engine_string)
     elif sp_used == 'clean':
         clean.clean(**config['clean']['clean'])
+    elif sp_used == 'featurize':
+        featurize.featurize(**config['featurize']['featurize'])
+    elif sp_used == 'model':
+        model.model(**config['model']['model'])
     else:
         parser.print_help()

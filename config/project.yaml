@@ -17,12 +17,34 @@ featurize:
       - length
       - elevation_gain
       - route_type
-    response:
+    response: difficulty_rating
     features_name: features
     features_ls_path: data/models/features.txt
     activities_name: activities
     activities_ls_path: data/models/activities.txt
     cut_labels:
-    cut_bins:
-    num_col_name:
-    bin_col_name:
+      - easy
+      - moderate
+      - hard
+    cut_bins: [0, 2, 3, 7]
+    num_col_name: difficulty_rating
+    bin_col_name: difficulty_class
+    featurize_path: data/models/df_featurize.csv
+model:
+  model:
+    featurize_path: data/models/df_featurize.csv
+    trail_id: trail_id
+    response: difficulty_class
+    test_size:  0.2
+    random_state_split: 0
+    random_state_model: 0
+    model_path: models/model.pkl
+    x_test_path: data/models/x_test.csv
+    y_test_path: data/models/y_test.csv
+    cv: 5
+    scoring: accuracy
+    cm_labels:
+      - easy
+      - moderate
+      - hard
+    output_path: models/evaluate.txt
