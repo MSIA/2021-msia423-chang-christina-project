@@ -1,10 +1,10 @@
 import logging.config
 
-import numpy as np
 import pandas as pd
 
 
 logger = logging.getLogger(__name__)
+
 
 def yards_to_miles(df, column_name, digits):
     df[column_name] = round(df[column_name] / 1760, digits)
