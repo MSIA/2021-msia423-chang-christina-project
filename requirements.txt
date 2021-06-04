@@ -4,6 +4,7 @@ docutils==0.15.2
 Flask==1.1.1
 Flask-SQLAlchemy==2.4.1
 pandas==1.1.5
+numpy==1.17.2
 py==1.10.0
 PyMySQL==0.9.3
 pyparsing==2.4.7
