@@ -3,7 +3,15 @@ import logging.config
 from flask import Flask
 from flask import render_template, request, redirect, url_for
 
+from src.recommend import predict as predict
+from src.recommend import recommend as rec
 import uuid
+
+import yaml
+# Load configuration file for parameters and tmo path
+with open('config/project.yaml', "r") as f:
+    config = yaml.load(f, Loader=yaml.FullLoader)
+
 
 # Initialize the Flask application
 app = Flask(__name__, template_folder="app/templates", static_folder="app/static")
@@ -18,9 +26,9 @@ logger = logging.getLogger(app.config["APP_NAME"])
 logger.debug('Web app log')
 
 # Initialize the database session
-from src.create_db import Hike, HikeManager
+from src.create_db import Trails, TrailManager
 
-hike_manager = HikeManager(app)
+trail_manager = TrailManager(app)
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -49,14 +57,33 @@ def home():
 @app.route('/my_template/<length>/<elevation_gain>/<route_type>/<features>/<activities>', methods=['GET', 'POST'])
 def my_template(length, elevation_gain, route_type, features, activities):
     if request.method == 'GET':
-        # LOAD MODEL
 
         # Add to database
         input_id = str(uuid.uuid1())
-        hike_manager.add_input(input_id, length, elevation_gain, route_type, features, activities)
-        hike_manager.close()
+        trail_manager.add_input(input_id, length, elevation_gain, route_type, features, activities)
+        trail_manager.close()
 
-        return str(length) + str(elevation_gain) + route_type + features + activities
+        # LOAD MODEL
+        prediction = predict(length, elevation_gain, route_type, features, activities,
+                             **config['recommend']['predict'])
+        print(prediction)
+
+        recommend_ids = rec(length, elevation_gain, route_type, features, activities,
+                        **config['recommend']['recommend'])
+
+        print(recommend_ids)
+
+        try:
+            trails = trail_manager.session.query(Trails).filter(Trails.trail_id.in_(recommend_ids))#.limit(app.config["MAX_ROWS_SHOW"]).all()
+            #trails = trail_manager.session.query(Trails).filter_by(trail_id=recommend_ids).limit(app.config["MAX_ROWS_SHOW"]).all()
+            logger.debug("Index page accessed")
+            return render_template('result.html', prediction=prediction, trails=trails)
+        except:
+            traceback.print_exc()
+            logger.warning("Not able to display tracks, error page returned")
+            return render_template('error.html')
+
+        #return str(length) + str(elevation_gain) + route_type + features + activities + prediction
     # return render_template('index.html')
 
 

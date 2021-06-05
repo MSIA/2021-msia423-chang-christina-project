@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="static/basic.css" rel="stylesheet">
+</head>
+
+<body>
+    <h3>
+         <a href = "{{ url_for('my_template',length='0',elevation_gain='0',route_type='route',features='features',activities='activities') }}">Penny Lane Music Recommender</a>
+    </h3>
+    <hr/>
+
+    <h4>
+        Your hike is {{prediction}}.
+    </h4>
+    <table>
+         <thead>
+            <tr>
+               <th>Name</th>
+               <th>Area Name</th>
+               <th>City Name</th>
+               <th>State Name</th>
+               <th>Length</th>
+               <th>Elevation Gain</th>
+               <th>Route Type</th>
+            </tr>
+         </thead>
+
+         <tbody>
+            {% for trail in trails %}
+               <tr>
+                   <td>{{ trail.name }}</td>
+                   <td>{{ trail.area_name }}</td>
+                   <td>{{ trail.city_name }}</td>
+                   <td>{{ trail.state_name }}</td>
+                   <td>{{ trail.length }}</td>
+                   <td>{{ trail.elevation_gain }}</td>
+                   <td>{{ trail.route_type }}</td>
+               </tr>
+            {% endfor %}
+         </tbody>
+      </table>
+
+</body>
+</html>
