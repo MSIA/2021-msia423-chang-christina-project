@@ -3,6 +3,7 @@ import logging.config
 import numpy as np
 import pandas as pd
 import pickle
+import re
 
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.preprocessing import StandardScaler
@@ -36,6 +37,12 @@ def column_ohe(df, column_name, col_input):
 
 
 def collect_input(length_input, elevation_gain_input, route_type_input, features_input, activities_input):
+
+    # Convert string with brackets to list
+    features_input = re.findall(r'\'\s*([^\']*?)\s*\'', features_input)
+    activities_input = re.findall(r'\'\s*([^\']*?)\s*\'', activities_input)
+
+    # Create input dictionary
     input_dict = {'length': length_input,
                   'elevation_gain': elevation_gain_input,
                   'route_type': route_type_input,
@@ -107,12 +114,12 @@ def recommend_trails(n, df_features, df, trail_id, response, input_vector, displ
 
     # Get the trail id using the index
     most_sim_id = list(input_matrix_ind[sim_ind])
-    most_sim_df = df[df[trail_id].isin(most_sim_id)].reset_index(drop=True)
+    # most_sim_df = df[df[trail_id].isin(most_sim_id)].reset_index(drop=True)
+    #
+    # # Show a subset of columns
+    # res = most_sim_df[display_feature_list]
 
-    # Show a subset of columns
-    res = most_sim_df[display_feature_list]
-
-    return res
+    return most_sim_id
 
 
 def predict_difficulty(input_vector, model_path):
@@ -126,8 +133,17 @@ def predict_difficulty(input_vector, model_path):
 
 
 def predict(length_input, elevation_gain_input, route_type_input, features_input, activities_input,
-            features_name, full_features_ls, activities_name, full_activities_ls, df, route_type,
+            features_name, full_features_ls_path, activities_name, full_activities_ls_path, clean_data_path, route_type,
             model_path):
+
+    df = pd.read_csv(clean_data_path)
+
+    with open(full_features_ls_path) as f:
+        full_features_ls = [line.rstrip() for line in f]
+
+    with open(full_activities_ls_path) as f:
+        full_activities_ls = [line.rstrip() for line in f]
+
     dict_input = collect_input(length_input, elevation_gain_input, route_type_input, features_input, activities_input)
     user_input = create_input_features(features_name, full_features_ls,
                                        activities_name, full_activities_ls,
@@ -138,8 +154,17 @@ def predict(length_input, elevation_gain_input, route_type_input, features_input
 
 
 def recommend(length_input, elevation_gain_input, route_type_input, features_input, activities_input,
-              features_name, full_features_ls, activities_name, full_activities_ls, df, route_type,
-              n, df_features, trail_id, response, display_feature_list):
+              features_name, full_features_ls_path, activities_name, full_activities_ls_path, clean_data_path,
+              route_type, n, featurize_path, trail_id, response, display_feature_list):
+
+    df = pd.read_csv(clean_data_path)
+    df_features = pd.read_csv(featurize_path)
+
+    with open(full_features_ls_path) as f:
+        full_features_ls = [line.rstrip() for line in f]
+
+    with open(full_activities_ls_path) as f:
+        full_activities_ls = [line.rstrip() for line in f]
 
     dict_input = collect_input(length_input, elevation_gain_input, route_type_input, features_input, activities_input)
     user_input = create_input_features(features_name, full_features_ls,
