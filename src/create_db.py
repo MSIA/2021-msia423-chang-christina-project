@@ -17,10 +17,10 @@ logger = logging.getLogger(__name__)
 Base = declarative_base()
 
 
-class Hike(Base):
+class Input(Base):
     """Create a data model for the database to be set up for capturing national park trails."""
 
-    __tablename__ = 'trails'
+    __tablename__ = 'input'
     input_id = Column(String(100), primary_key=True)
     length = Column(Float, unique=False, nullable=False)
     elevation_gain = Column(Float, unique=False, nullable=False)
@@ -30,7 +30,7 @@ class Hike(Base):
     #prediction = Column(String(100), unique=False, nullable=False)
 
     def __repr__(self):
-        return '<Trail: %r>' % self.name
+        return '<Input: %r>' % self.name
 
 
 def create_db(engine_string: str) -> None:
@@ -55,7 +55,7 @@ def create_db(engine_string: str) -> None:
     #     logger.info('Database could not be created.')
 
 
-def insert_all(engine_string, data_path):
+def insert_all(engine_string, data_path, table_name):
     """insert csv in sql"""
     engine = create_engine(engine_string, echo=False)
 
@@ -66,10 +66,10 @@ def insert_all(engine_string, data_path):
     #  Warning: (1366, "Incorrect string value: '\\xC4\\x81ulu ...' for column 'name' at row 365")
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
-        df.to_sql('trails', con=engine, if_exists='replace')
+        df.to_sql(table_name, con=engine, if_exists='replace')
 
 
-class HikeManager:
+class InputManager:
 
     def __init__(self, app=None, engine_string=None):
         """Manage Flask to SQLAlchemy connection.
@@ -116,7 +116,7 @@ class HikeManager:
         """
 
         session = self.session
-        input = Hike(input_id=input_id,
+        input = Input(input_id=input_id,
                       length=length,
                       elevation_gain=elevation_gain,
                       route_type=route_type,
