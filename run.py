@@ -9,10 +9,12 @@ import yaml
 
 from config.flaskconfig import SQLALCHEMY_DATABASE_URI
 from src.s3 import upload_file_to_s3, download_file_from_s3
-from src.create_db import create_db
+from src.create_db import create_db, insert_all
 import src.clean as clean
 import src.featurize as featurize
 import src.model as model
+
+import src.recommend as recommend
 
 logging.config.fileConfig('config/logging/local.conf', disable_existing_loggers=False)
 logger = logging.getLogger(__name__)
@@ -39,14 +41,12 @@ sb_create.add_argument('--engine_string', default=SQLALCHEMY_DATABASE_URI,
                        help='SQLAlchemy connection URI for database')
 sb_create.add_argument('--data_path',  help='Insert data into database')
 
-# Sub-parser for cleaning data
+# Sub-parser for the rest of the pipeline
 sb_clean = subparsers.add_parser('clean', description='Clean data')
-
-# Sub-parser for creating features
 sb_featurize = subparsers.add_parser('featurize', description='Create features')
-
-# Sub-parser for creating features
 sb_model = subparsers.add_parser('model', description='Run model')
+sb_predict = subparsers.add_parser('predict', description='Predicting user input')
+# sb_recommend = subparsers.add_parser('recommend', description='Make recommendations from user input')
 
 # Get parser
 args = parser.parse_args()
@@ -67,11 +67,18 @@ if __name__ == '__main__':
         download_file_from_s3(args.local_path, args.s3path)
     elif sp_used == 'create_db':
         create_db(args.engine_string)
+        insert_all(args.engine_string, **config['create_db']['insert_all'])
     elif sp_used == 'clean':
         clean.clean(**config['clean']['clean'])
     elif sp_used == 'featurize':
         featurize.featurize(**config['featurize']['featurize'])
     elif sp_used == 'model':
         model.model(**config['model']['model'])
+    elif sp_used == 'predict':
+        #model.model(**config['recommend']['predict'])
+        # length, elevation_gain, route_type, features, activities,
+        res = recommend.predict(5, 2, 'out_and_back', "['beach']", "['fishing']",
+                                **config['recommend']['predict'])
+        print(res)
     else:
         parser.print_help()
