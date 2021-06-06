@@ -3,18 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <link href="static/basic.css" rel="stylesheet">
+    <link rel="shortcut icon" href="static/favicon.ico">
 </head>
+<link href='https://fonts.googleapis.com/css?family=Oswald' rel='stylesheet'>
 <style>
   html {
     text-align: center;
   }
+  body {
+    font-family: 'Oswald';font-size: 22px;
+    background-image: url("static/craterlake.jpeg");
+    background-color: rgba(0,0,0,.2);
+  }
 </style>
-<body>
-    <h3>
-         <a href = "{{ url_for('home') }}">Take a Hike</a>
-    </h3>
-
-    <hr/>
+<body style="color:white;">
+      <!img src="static/yosemite.jpg" width="700" height="300">
+      <h1 style="color:white;">TAKE A HIKE</h1>
       <form action="{{ url_for('home') }}" method=post class=add-entry>
       <dl>
         <label for="length">Length (miles):</label>
@@ -32,7 +36,7 @@
         <br/>
         <label for="features">Features:</label>
         <br />
-        <select name="features", id="features" multiple>
+        <select name="features", id="features" multiple size="7">
             <option value="ada">ada</option>
             <option value="beach">beach</option>
             <option value="cave">cave</option>
@@ -87,7 +91,6 @@
             <option value="walking">walking</option>
             <option value="whitewater_kayaking">whitewater kayaking</option>
         </select>
-        <br />
         <br />
         <input type=submit value="Find Me Some Trails!">
       </dl>

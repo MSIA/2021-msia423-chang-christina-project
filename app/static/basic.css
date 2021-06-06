@@ -6,3 +6,13 @@ body {
   font-family: 'Open Sans', sans-serif;
   background-color:#cdced8;
 }
+h1{
+    font-size: 100px;
+}
+label{
+    font-size: 20px;
+}
+table{
+    font-size: 3px;
+    font-color: white;
+}

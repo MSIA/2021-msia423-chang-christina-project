@@ -2,26 +2,33 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link href="static/basic.css" rel="stylesheet">
+    <link href="static/basic_result.css" rel="stylesheet">
+    <link rel="shortcut icon" href="static/favicon.ico">
 </head>
+<link href='https://fonts.googleapis.com/css?family=Oswald' rel='stylesheet'>
 <style>
   html {
     text-align: center;
   }
+  h1 {
+    font-family: 'Oswald';font-size: 100px;
+  }
+  body {
+    font-family: 'Oswald';font-size: 18px;
+    background-image: url("/static/craterlake.jpeg");
+    background-color: rgba(0,0,0,.2);
+  }
 </style>
-<body>
+<body style="color:white;">
+    <h1 style="color:white;">TAKE A HIKE</h1>
     <h3>
-         <a href = "{{ url_for('home') }}">Take a Hike</a>
-    </h3>
-    <hr/>
-    <h4>
         Your hike is predicted to be {{prediction}}.
-    </h4>
+    </h3>
     <h4>
         You might like these trails!
     </h4>
 
-    <table style="margin:0px auto; width:1200px">
+    <table style="margin-left:auto;margin-right:auto;">
          <thead>
             <tr>
                <th>Name</th>
@@ -48,6 +55,8 @@
             {% endfor %}
          </tbody>
       </table>
-
+    <h4>
+         <a href = "{{ url_for('home') }}">Back to Home</a>
+    </h4>
 </body>
 </html>
