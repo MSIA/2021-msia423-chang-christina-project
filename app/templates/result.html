@@ -4,17 +4,24 @@
     <meta charset="UTF-8">
     <link href="static/basic.css" rel="stylesheet">
 </head>
-
+<style>
+  html {
+    text-align: center;
+  }
+</style>
 <body>
     <h3>
-         <a href = "{{ url_for('my_template',length='0',elevation_gain='0',route_type='route',features='features',activities='activities') }}">Penny Lane Music Recommender</a>
+         <a href = "{{ url_for('home') }}">Take a Hike</a>
     </h3>
     <hr/>
-
     <h4>
-        The difficulty of your hike is {{prediction}}.
+        Your hike is predicted to be {{prediction}}.
     </h4>
-    <table>
+    <h4>
+        You might like these trails!
+    </h4>
+
+    <table style="margin:0px auto; width:1200px">
          <thead>
             <tr>
                <th>Name</th>

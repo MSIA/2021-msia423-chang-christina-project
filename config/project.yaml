@@ -1,3 +1,7 @@
+create_db:
+  insert_all:
+    data_path: data/models/df_cleaned.csv
+    table_name: trails
 clean:
   clean:
     raw_data_path: data/raw/national-park-trails.csv
@@ -48,3 +52,24 @@ model:
       - moderate
       - hard
     output_path: models/evaluate.txt
+recommend:
+  predict:
+    features_name: features
+    full_features_ls_path: data/models/features.txt
+    activities_name: activities
+    full_activities_ls_path: data/models/activities.txt
+    clean_data_path: data/models/df_cleaned.csv
+    route_type: route_type
+    model_path: models/model.pkl
+  recommend:
+    features_name: features
+    full_features_ls_path: data/models/features.txt
+    activities_name: activities
+    full_activities_ls_path: data/models/activities.txt
+    clean_data_path: data/models/df_cleaned.csv
+    route_type: route_type
+    n: 10
+    featurize_path: data/models/df_featurize.csv
+    trail_id: trail_id
+    response: difficulty_class
+    display_feature_list: ['name', 'area_name', 'city_name', 'state_name', 'length', 'elevation_gain', 'route_type']

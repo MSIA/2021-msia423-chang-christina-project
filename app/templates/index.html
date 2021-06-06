@@ -4,22 +4,24 @@
     <meta charset="UTF-8">
     <link href="static/basic.css" rel="stylesheet">
 </head>
-
+<style>
+  html {
+    text-align: center;
+  }
+</style>
 <body>
     <h3>
-         <a href = "{{ url_for('my_template',length='0',elevation_gain='0',route_type='route',features='features',activities='activities') }}">Penny Lane Music Recommender</a>
+         <a href = "{{ url_for('home') }}">Take a Hike</a>
     </h3>
 
     <hr/>
       <form action="{{ url_for('home') }}" method=post class=add-entry>
       <dl>
-        <label for="length">Length:</label>
+        <label for="length">Length (miles):</label>
         <input type=text size=15 name=length placeholder="Length">
         <br />
-        <br />
-        <label for="elevation_gain">Elevation Gain:</label>
+        <label for="elevation_gain">Elevation Gain (feet):</label>
         <input type=text size=15 name=elevation_gain placeholder="Elevation Gain">
-        <br />
         <br />
         <label for="route_type">Route Type:</label>
         <select name="route_type", id="route_type">
@@ -27,11 +29,10 @@
             <option value="point_to_point">point to point</option>
             <option value="loop">loop</option>
         </select>
-        <br />
-        <br />
+        <br/>
         <label for="features">Features:</label>
         <br />
-        <select name="features", id="features" multiple size="7">
+        <select name="features", id="features" multiple>
             <option value="ada">ada</option>
             <option value="beach">beach</option>
             <option value="cave">cave</option>
@@ -54,7 +55,6 @@
             <option value="wild_flowers">wild flowers</option>
             <option value="wildlife">wildlife</option>
         </select>
-        <br />
         <br />
         <label for="activities">Activities:</label>
         <br />
@@ -92,6 +92,5 @@
         <input type=submit value="Find Me Some Trails!">
       </dl>
     </form>
-
 </body>
 </html>

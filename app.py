@@ -69,12 +69,13 @@ def my_template(length, elevation_gain, route_type, features, activities):
         print(prediction)
 
         recommend_ids = rec(length, elevation_gain, route_type, features, activities,
-                        **config['recommend']['recommend'])
+                            **config['recommend']['recommend'])
 
         print(recommend_ids)
 
         try:
-            trails = trail_manager.session.query(Trails).filter(Trails.trail_id.in_(recommend_ids))#.limit(app.config["MAX_ROWS_SHOW"]).all()
+            trails = trail_manager.session.query(Trails).filter(Trails.trail_id.in_(recommend_ids))\
+                    .order_by(Trails.length)#.limit(app.config["MAX_ROWS_SHOW"]).all()
             #trails = trail_manager.session.query(Trails).filter_by(trail_id=recommend_ids).limit(app.config["MAX_ROWS_SHOW"]).all()
             logger.debug("Index page accessed")
             return render_template('result.html', prediction=prediction, trails=trails)
