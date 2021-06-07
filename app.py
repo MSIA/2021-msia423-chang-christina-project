@@ -35,7 +35,6 @@ trail_manager = TrailManager(app)
 def home():
     if request.method == 'GET':
         try:
-            # LOAD MODEL
             return render_template('index.html')
             logger.info("Index page accessed")
         except:
@@ -43,15 +42,23 @@ def home():
             logger.warning('Error page')
 
     if request.method == 'POST':
-        length = request.form['length']
-        elevation_gain = request.form['elevation_gain']
-        route_type = request.form['route_type']
-        features = request.form.getlist('features')
-        activities = request.form.getlist('activities')
-        url_for_post = url_for('my_template', length=length, elevation_gain=elevation_gain, route_type=route_type,
-                               features=features, activities=activities)
+        try:
+            length = request.form['length']
+            elevation_gain = request.form['elevation_gain']
+            route_type = request.form['route_type']
+            features = request.form.getlist('features')
+            activities = request.form.getlist('activities')
+            url_for_post = url_for('my_template', length=length, elevation_gain=elevation_gain, route_type=route_type,
+                                   features=features, activities=activities)
+            print(length)
+            print(elevation_gain)
+            if (length == "") | (elevation_gain == ""):
+                return render_template('error.html')
 
-        return redirect(url_for_post)
+            return redirect(url_for_post)
+        except:
+            return render_template('error.html')
+            logger.warning('Error page')
 
 
 @app.route('/my_template/<length>/<elevation_gain>/<route_type>/<features>/<activities>', methods=['GET', 'POST'])
@@ -63,20 +70,16 @@ def my_template(length, elevation_gain, route_type, features, activities):
         trail_manager.add_input(input_id, length, elevation_gain, route_type, features, activities)
         trail_manager.close()
 
-        # LOAD MODEL
+        # Predict and recommend
         prediction = predict(length, elevation_gain, route_type, features, activities,
                              **config['recommend']['predict'])
-        print(prediction)
 
         recommend_ids = rec(length, elevation_gain, route_type, features, activities,
                             **config['recommend']['recommend'])
 
-        print(recommend_ids)
-
         try:
             trails = trail_manager.session.query(Trails).filter(Trails.trail_id.in_(recommend_ids))\
-                    .order_by(Trails.length)#.limit(app.config["MAX_ROWS_SHOW"]).all()
-            #trails = trail_manager.session.query(Trails).filter_by(trail_id=recommend_ids).limit(app.config["MAX_ROWS_SHOW"]).all()
+                    .order_by(Trails.length)
             logger.debug("Index page accessed")
             return render_template('result.html', prediction=prediction, trails=trails)
         except:
@@ -84,45 +87,6 @@ def my_template(length, elevation_gain, route_type, features, activities):
             logger.warning("Not able to display tracks, error page returned")
             return render_template('error.html')
 
-        #return str(length) + str(elevation_gain) + route_type + features + activities + prediction
-    # return render_template('index.html')
-
 
 if __name__ == '__main__':
     app.run(debug=app.config["DEBUG"], port=app.config["PORT"], host=app.config["HOST"])
-    # app.run(debug=app.config["DEBUG"], port=app.config["PORT"], host=app.config["HOST"])
-
-# def index():
-#     """Main view that lists songs in the database.
-#
-#     Create view into index page that uses data queried from Track database and
-#     inserts it into the msiapp/templates/index.html template.
-#
-#     Returns: rendered html template
-#
-#     """
-#
-#     try:
-#         tracks = track_manager.session.query(Tracks).limit(app.config["MAX_ROWS_SHOW"]).all()
-#         logger.debug("Index page accessed")
-#         return render_template('index.html', tracks=tracks)
-#     except:
-#         traceback.print_exc()
-#         logger.warning("Not able to display tracks, error page returned")
-#         return render_template('error.html')
-
-
-# @app.route('/add', methods=['POST'])
-# def add_entry():
-#     """View that process a POST with new song input
-#
-#     :return: redirect to index page
-#     """
-#
-#     try:
-#         track_manager.add_track(artist=request.form['artist'], album=request.form['album'], title=request.form['title'])
-#         logger.info("New song added: %s by %s", request.form['title'], request.form['artist'])
-#         return redirect(url_for('index'))
-#     except:
-#         logger.warning("Not able to display tracks, error page returned")
-#         return render_template('error.html')
