@@ -1,8 +1,7 @@
 import pandas as pd
 import pytest
 
-from src.clean import *
-#from src.clean import yards_to_miles
+from src.clean import yards_to_miles
 from src.clean import df_drop_str
 
 
