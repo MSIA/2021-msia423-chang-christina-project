@@ -44,7 +44,7 @@ def clean(raw_data_path, length_col, digits, name_col, drop_str, clean_path):
     """Create cleaned dataframe and save to specified path.
 
         Args:
-            raw_data_path (str):
+            raw_data_path (str): path to cleaned data file
             length_col (str): name of column with distance measure
             digits (int): number of places to round
             name_col (str): name of string column

@@ -4,7 +4,6 @@ import numpy as np
 import pandas as pd
 import pickle
 
-import sklearn
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import cross_val_score
 from sklearn.metrics import confusion_matrix
@@ -13,16 +12,36 @@ from sklearn.ensemble import RandomForestClassifier
 logger = logging.getLogger(__name__)
 
 
-def train(df, trail_id, response, test_size, random_state_split, random_state_model,
-          model_path, x_test_path, y_test_path):
+def train(df, trail_id, response, test_size, random_state_split,
+          random_state_model, model_path, x_test_path, y_test_path):
+    """Train a random forest classifier.
 
+            Args:
+                df (:obj:`pandas.DataFrame`): path to features dataframe
+                trail_id (str): name of trail id column
+                response (str): name of response variable
+                test_size (float): proportion of the data to be included in the
+                tests set
+                random_state_split (float): random state for the train, tests,
+                split function
+                random_state_model (float): random state for the model
+                model_path (str): path to save the model
+                x_test_path (str): path to save x test
+                y_test_path (str): path to save y test
+
+            Returns:
+                None
+    """
     # Train, test, split
     X = df.drop(columns=[response, trail_id], axis=1)
     y = df[response]
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state_split)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=
+                                                        test_size, random_state=
+                                                        random_state_split)
 
     # Train the model
-    clf = RandomForestClassifier(random_state=random_state_model, n_estimators=10)
+    clf = RandomForestClassifier(random_state=random_state_model,
+                                 n_estimators=10)
     clf = clf.fit(X_train, y_train)
 
     # Save the model
@@ -33,7 +52,23 @@ def train(df, trail_id, response, test_size, random_state_split, random_state_mo
     np.savetxt(y_test_path, y_test, delimiter=",", fmt='%s')
 
 
-def evaluate(cv, model_path, x_test_path, y_test_path, scoring, cm_labels, output_path):
+def evaluate(cv, model_path, x_test_path, y_test_path, scoring, cm_labels,
+             output_path):
+    """Evaluate a random forest classifier.
+
+        Args:
+            cv (int): number of folds in cross validation
+            model_path (str): path to model path
+            x_test_path (str): path to x test
+            y_test_path (str): path to y test
+            scoring (str): type of scoring
+            cm_labels (:obj:`list` of :obj:`str`): labels of confusion matrix
+            output_path (str): path to save evaluation metrics
+
+        Returns:
+            None
+
+    """
     # Load model, x_test, and y_test
     clf = pickle.load(open(model_path, 'rb'))
     X_test = pd.read_csv(x_test_path, sep=',')
@@ -70,14 +105,18 @@ def model(featurize_path, trail_id, response,
           model_path, x_test_path, y_test_path,
           cv, scoring, cm_labels, output_path):
 
+    """Build a random forest model and evaluate the model."""
+
     # Read featurize data
     df = pd.read_csv(featurize_path)
 
     # Train random forest
-    train(df, trail_id, response, test_size, random_state_split, random_state_model, model_path, x_test_path,
+    train(df, trail_id, response, test_size, random_state_split,
+          random_state_model, model_path, x_test_path,
           y_test_path)
     logger.info('Model training finished.')
 
     # Evaluate random forest
-    evaluate(cv, model_path, x_test_path, y_test_path, scoring, cm_labels, output_path)
+    evaluate(cv, model_path, x_test_path, y_test_path, scoring, cm_labels,
+             output_path)
     logger.info('Model evaluation results saved.')

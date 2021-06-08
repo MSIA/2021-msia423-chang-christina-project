@@ -11,12 +11,23 @@ logger = logging.getLogger(__name__)
 
 
 def input_tag_ohe(feature_name, full_tag_ls, tag_input):
-    # feature_name: name of feature to append to column
-    # full_tag_ls: entire list of unique tags
-    # tag_input: list of tag inputs
+    """One hot encode tags of user input.
 
+        Args:
+            feature_name (str): name of feature to append to column
+            full_tag_ls (:obj:`list` of :obj:`str`): full list of unique tags
+            tag_input (:obj:`list` of :obj:`str`): list of tag inputs
+
+        Returns:
+            Series of one hot encoded input tag
+
+    """
+
+    # One hot encode user input
     split_series = pd.Series([full_tag_ls, tag_input])
     df_split = split_series.str.join('|').str.get_dummies()
+
+    # Append to column name
     df_split.columns = feature_name + '_' + df_split.columns
     tag_ohe = df_split.iloc[1, :]
 
@@ -24,7 +35,18 @@ def input_tag_ohe(feature_name, full_tag_ls, tag_input):
 
 
 def column_ohe(df, column_name, col_input):
-    # returns series
+    """One hot encode categorical feature.
+
+        Args:
+            df (:obj:`pandas.DataFrame`): dataframe with categorical feature
+            column_name (str): name of categorical feature
+            col_input (str): input of the user for the feature
+
+        Returns:
+            Series of one hot encoded values from the user input
+
+    """
+    # Returns series for one hot encoded values
     full_value_ls = list(df[column_name].unique())
     full_value_ls = [i.replace(' ', '_') for i in full_value_ls]
     split_series = pd.Series([full_value_ls, [col_input]])
@@ -33,10 +55,25 @@ def column_ohe(df, column_name, col_input):
 
     # Drop column for first unique value
     ohe_res = df_split.iloc[1, 1:]
+
     return ohe_res
 
 
-def collect_input(length_input, elevation_gain_input, route_type_input, features_input, activities_input):
+def collect_input(length_input, elevation_gain_input, route_type_input,
+                  features_input, activities_input):
+    """Reformat the user input into a dictionary.
+
+        Args:
+            length_input (str):  user input for length
+            elevation_gain_input (str): user input for elevation gain
+            route_type_input (str): user input for route type
+            features_input (str): user input for features
+            activities_input (str): user input for activities
+
+        Returns:
+            Dictionary of user inputs
+
+    """
 
     # Convert string with brackets to list
     features_input = re.findall(r'\'\s*([^\']*?)\s*\'', features_input)
@@ -56,8 +93,25 @@ def create_input_features(features_name, full_features_ls,
                           activities_name, full_activities_ls,
                           df, route_type,
                           input_dict):
-    # returns pandas.core.series.Series
+    """Convert user input into a feature vector.
 
+        Args:
+            features_name (str): name of tag feature
+            full_features_ls (:obj:`list` of :obj:`str`): full list of unique
+            tags for features
+            activities_name (str): name of activities feature
+            full_activities_ls (:obj:`list` of :obj:`str`): full list of unique
+            tags for activities
+            df (:obj:`pandas.DataFrame`): cleaned dataframe
+            route_type (str): name of route type column
+            input_dict: (:obj: `dict`): dictionary of user inputs
+
+        Returns:
+            Series of user inputs
+
+    """
+
+    # Collect the user inputs
     length_input = input_dict['length']
     elevation_gain_input = input_dict['elevation_gain']
     route_type_input = input_dict['route_type']
@@ -65,20 +119,34 @@ def create_input_features(features_name, full_features_ls,
     activities_input = input_dict['activities']
 
     # One hot encode tags and categorical variable
-    features_ohe = input_tag_ohe(features_name, full_features_ls, features_input)
-    activities_ohe = input_tag_ohe(activities_name, full_activities_ls, activities_input)
+    features_ohe = input_tag_ohe(features_name, full_features_ls,
+                                 features_input)
+    activities_ohe = input_tag_ohe(activities_name, full_activities_ls,
+                                   activities_input)
     route_type_ohe = column_ohe(df, route_type, route_type_input)
 
     # Numerical inputs
-    num_features = pd.Series({'length': length_input, 'elevation_gain': elevation_gain_input})
+    num_features = pd.Series({'length': length_input,
+                              'elevation_gain': elevation_gain_input})
 
     # Create input vector
-    input_vector = pd.concat([num_features, route_type_ohe, features_ohe, activities_ohe])
+    input_vector = pd.concat([num_features, route_type_ohe, features_ohe,
+                              activities_ohe])
 
     return input_vector
 
 
 def scaled_cosine_sim(df):
+    """Calculate the cosine similarity  of a dataframe.
+
+        Args:
+            df (:obj:`pandas.DataFrame`): data to calculate distance
+
+        Returns:
+            cs (`numpy.array`): Distance matrix using cosine similarity
+
+    """
+
     # Standard scaling for numerical data
     scaler = StandardScaler()
     df_scaled = scaler.fit_transform(df)
@@ -89,9 +157,20 @@ def scaled_cosine_sim(df):
     return cs
 
 
-def recommend_trails(n, df_features, df, trail_id, response, input_vector, display_feature_list):
-    # df_features: one hot encoded
-    # df: includes trail info
+def recommend_trails(n, df_features, trail_id, response, input_vector):
+    """Recommend n most similar trails to user input
+
+        Args:
+            n (int): number of similar trails to return
+            df_features (:obj:`pandas.DataFrame`): dataframe of features
+            trail_id (str): name of trail_id column
+            response (str): name of response column
+            input_vector (`pandas.Series`): series of user inputs
+
+        Returns:
+            most_sim_id (:obj:`list` of `int`): list of trail ids
+
+    """
 
     # Set trail_id to be the index
     input_matrix = df_features.set_index(trail_id)
@@ -101,7 +180,8 @@ def recommend_trails(n, df_features, df, trail_id, response, input_vector, displ
     input_matrix_ind = input_matrix.index
 
     # Insert new input in first row, use this to calculate similarity
-    input_dist = pd.concat([pd.DataFrame(input_vector).transpose(), input_matrix])
+    input_dist = pd.concat([pd.DataFrame(input_vector).transpose(),
+                            input_matrix])
 
     # Calculate distance
     cs = scaled_cosine_sim(input_dist)
@@ -114,27 +194,35 @@ def recommend_trails(n, df_features, df, trail_id, response, input_vector, displ
 
     # Get the trail id using the index
     most_sim_id = list(input_matrix_ind[sim_ind])
-    # most_sim_df = df[df[trail_id].isin(most_sim_id)].reset_index(drop=True)
-    #
-    # # Show a subset of columns
-    # res = most_sim_df[display_feature_list]
 
     return most_sim_id
 
 
 def predict_difficulty(input_vector, model_path):
+    """Predict the difficulty of a trail
+
+        Args:
+            input_vector (`panads.Series`): series of user inputs
+            model_path (str): path to model
+
+        Returns:
+            most_sim_id (:obj:`list` of `int`): list of trail ids
+
+    """
     # Make prediction
     input_arr = np.array(input_vector).reshape(1, -1)
     model = pickle.load(open(model_path, 'rb'))
-    # pred = pd.Series({response: model.predict(input_arr)[0]})
     pred = model.predict(input_arr)[0]
 
     return pred
 
 
-def predict(length_input, elevation_gain_input, route_type_input, features_input, activities_input,
-            features_name, full_features_ls_path, activities_name, full_activities_ls_path, clean_data_path, route_type,
+def predict(length_input, elevation_gain_input, route_type_input,
+            features_input, activities_input,
+            features_name, full_features_ls_path, activities_name,
+            full_activities_ls_path, clean_data_path, route_type,
             model_path):
+    """Make a prediction on trail difficulty based on user inputs."""
 
     df = pd.read_csv(clean_data_path)
 
@@ -144,7 +232,9 @@ def predict(length_input, elevation_gain_input, route_type_input, features_input
     with open(full_activities_ls_path) as f:
         full_activities_ls = [line.rstrip() for line in f]
 
-    dict_input = collect_input(length_input, elevation_gain_input, route_type_input, features_input, activities_input)
+    dict_input = collect_input(length_input, elevation_gain_input,
+                               route_type_input, features_input,
+                               activities_input)
     user_input = create_input_features(features_name, full_features_ls,
                                        activities_name, full_activities_ls,
                                        df, route_type,
@@ -153,9 +243,13 @@ def predict(length_input, elevation_gain_input, route_type_input, features_input
     return predict_difficulty(user_input, model_path)
 
 
-def recommend(length_input, elevation_gain_input, route_type_input, features_input, activities_input,
-              features_name, full_features_ls_path, activities_name, full_activities_ls_path, clean_data_path,
-              route_type, n, featurize_path, trail_id, response, display_feature_list):
+def recommend(length_input, elevation_gain_input, route_type_input,
+              features_input, activities_input,
+              features_name, full_features_ls_path, activities_name,
+              full_activities_ls_path, clean_data_path,
+              route_type, n, featurize_path, trail_id, response,
+              display_feature_list):
+    """Provide top n recommendations on most similar trails."""
 
     df = pd.read_csv(clean_data_path)
     df_features = pd.read_csv(featurize_path)
@@ -166,11 +260,13 @@ def recommend(length_input, elevation_gain_input, route_type_input, features_inp
     with open(full_activities_ls_path) as f:
         full_activities_ls = [line.rstrip() for line in f]
 
-    dict_input = collect_input(length_input, elevation_gain_input, route_type_input, features_input, activities_input)
+    dict_input = collect_input(length_input, elevation_gain_input,
+                               route_type_input, features_input,
+                               activities_input)
     user_input = create_input_features(features_name, full_features_ls,
                                        activities_name, full_activities_ls,
                                        df, route_type,
                                        dict_input)
 
-    return recommend_trails(n, df_features, df, trail_id, response, user_input, display_feature_list)
-    #recommend_trails(5, df_featurize, df, 'trail_id', 'difficulty_class', user_input, display_feature_list)
+    return recommend_trails(n, df_features, df, trail_id, response, user_input,
+                            display_feature_list)
