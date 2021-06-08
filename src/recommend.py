@@ -268,5 +268,4 @@ def recommend(length_input, elevation_gain_input, route_type_input,
                                        df, route_type,
                                        dict_input)
 
-    return recommend_trails(n, df_features, df, trail_id, response, user_input,
-                            display_feature_list)
+    return recommend_trails(n, df_features, trail_id, response, user_input)
