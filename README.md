@@ -219,7 +219,7 @@ docker run \
 This command uploads a CSV file from the specified `--local_path` to the S3 bucket. The `--s3path` is a required 
 argument. By default, the `local_path` is set to `data/raw/national-park-trails.csv`.
 
-### Download the data from S3
+#### Download the data from S3
 
 ```bash
 docker run \
@@ -315,82 +315,3 @@ docker run -p 5000:5000 --name test hike app.py
 ```bash
 docker run hike -m pytest
 ```
-
-
-
-
-
-
-
-```bash
-docker build -f app/Dockerfile -t hike .
-docker run \
-    -e AWS_ACCESS_KEY_ID \
-    -e AWS_SECRET_ACCESS_KEY \
-    hike run.py s3_upload --s3path <your_s3_path> --local_path <your_local_path>
-docker run \
-    -e AWS_ACCESS_KEY_ID \
-    -e AWS_SECRET_ACCESS_KEY \
-    hike run.py s3_download --s3path <your_s3_path> --local_path <your_local_path>
-docker run -it \
-    -e MYSQL_HOST \
-    -e MYSQL_PORT \
-    -e MYSQL_USER \
-    -e MYSQL_PASSWORD \
-    -e DATABASE_NAME \
-    hike run.py create_db --engine_string
-docker run --mount type=bind,source="$(pwd)/data/",target=/app/data/ hike run.py clean
-docker run --mount type=bind,source="$(pwd)/data/",target=/app/data/ hike run.py featurize
-docker run --mount type=bind,source="$(pwd)/",target=/app/ hike run.py model
-
-
-docker build -f app/Dockerfile_python -t hike .
-docker build -f app/Dockerfile -t hike .
-docker run -p 5000:5000 --name test hike app.py
-
-http://0.0.0.0:5000/
-```
-
-
-Docker command Data acquisition / landing in S3 (upload and download), creating RDS, running app
-```bash
-docker build -f app/Dockerfile_acquire -t hike-acquire .
-docker run \
-    -e AWS_ACCESS_KEY_ID \
-    -e AWS_SECRET_ACCESS_KEY \
-    -e MYSQL_HOST \
-    -e MYSQL_PORT \
-    -e MYSQL_USER \
-    -e MYSQL_PASSWORD \
-    -e DATABASE_NAME \
-    -e SQLALCHEMY_DATABASE_URI \
-    --mount type=bind,source="$(pwd)/data",target=/app/data/ \
-    hike-acquire run_acquire.sh
-```
-
-Docker for acquiring running pipeline
-```bash
-docker build -f app/Dockerfile_pipeline -t hike-pipeline .
-docker run \
-    --mount type=bind,source="$(pwd)/",target=/app/ \
-    hike-pipeline run_pipeline.sh
-```
-
-Docker for running app
-```bash
-docker build -f app/Dockerfile -t hike .
-docker run -p 5000:5000 --name test hike app.py
-
-docker run -e SQLALCHEMY_DATABASE_URI="mysql+pymysql://msia423instructor:clc3780@nw-msia423-clc3780.cbqlcxzmovlx.us-east-1.rds.amazonaws.com:3306/msia423_db" -p 5000:5000 hike app.py
-```
-http://0.0.0.0:5000/
-when youre done with the app run
-```bash
-docker rm test
-```
-
-Docker for running tests
-```bash
-docker run hike -m pytest
-```
-
