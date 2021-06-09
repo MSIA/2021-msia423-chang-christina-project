@@ -54,37 +54,33 @@ increase in the number of users each month for the first six months.
 
 ```
 ├── README.md                         <- You are here
-├── api
+├── app
 │   ├── static/                       <- CSS, JS files that remain static
 │   ├── templates/                    <- HTML (or other code) that is templated and changes based on a set of inputs
 │   ├── boot.sh                       <- Start up script for launching app in Docker container.
-│   ├── Dockerfile                    <- Dockerfile for building image to run app  
+│   ├── Dockerfile                    <- Dockerfile for building image to run app and run tests
+│   ├── Dockerfile_acquire            <- Dockerfile for building image to acquire data 
+│   ├── Dockerfile_pipeline           <- Dockerfile for building image to run the pipeline
 │
 ├── config                            <- Directory for configuration files 
 │   ├── local/                        <- Directory for keeping environment variables and other local configurations that *do not sync** to Github 
 │   ├── logging/                      <- Configuration of python loggers
 │   ├── flaskconfig.py                <- Configurations for Flask API 
 │
+├── copilot                           <- Directory for copilot, which deploys the Flask app
+│
 ├── data                              <- Folder that contains data used or generated. Only the external/, sample/, and raw/ subdirectories are tracked by git. 
-│   ├── external/                     <- External data sources, usually reference data,  will be synced with git
-│   ├── sample/                       <- Sample data used for code development and testing, will be synced with git
+│   ├── models/                       <- Data files to be used for modling, will be synced with git
 │   ├── raw/                          <- Raw data files, will be synced with git
 │
 ├── deliverables/                     <- Any white papers, presentations, final work products that are presented or delivered to a stakeholder 
-│
-├── docs/                             <- Sphinx documentation based on Python docstrings. Optional for this project. 
-│
-├── figures/                          <- Generated graphics and figures to be used in reporting, documentation, etc
 │
 ├── models/                           <- Trained model objects (TMOs), model predictions, and/or model summaries
 │
 ├── notebooks/
 │   ├── archive/                      <- Develop notebooks no longer being used.
-│   ├── deliver/                      <- Notebooks shared with others / in final state
 │   ├── develop/                      <- Current notebooks being used in development.
 │   ├── template.ipynb                <- Template notebook for analysis with useful imports, helper functions, and SQLAlchemy setup. 
-│
-├── reference/                        <- Any reference material relevant to the project
 │
 ├── src/                              <- Source data for the project 
 │
@@ -93,6 +89,8 @@ increase in the number of users each month for the first six months.
 ├── app.py                            <- Flask wrapper for running the model 
 ├── run.py                            <- Simplifies the execution of one or more of the src scripts  
 ├── requirements.txt                  <- Python package dependencies 
+├── run_acquire.sh                    <- Script for acquiring data in Docker container
+├── run_pipeline.sh                   <- Script for running the pipeline in Docker container
 ```
 
 ## Running the app
