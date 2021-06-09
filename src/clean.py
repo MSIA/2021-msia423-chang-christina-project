@@ -97,6 +97,7 @@ def clean(raw_data_path, length_col, digits, name_col, drop_str, clean_path):
     df_clean = df_drop_str(df_clean, name_col, drop_str)
 
     df_clean.to_csv(clean_path, index=False)
-    logger.info('Cleaned dataframe saved.')
+    logger.info('Cleaned dataframe saved with %s rows and %s columns',
+                np.shape(df_clean)[0], np.shape(df_clean)[1])
 
     return df_clean
