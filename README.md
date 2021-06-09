@@ -9,15 +9,12 @@ QA: Matt Ko
 - [Project charter](#project-charter)
 - [Directory structure](#directory-structure)
 - [Running the app](#running-the-app)
-    * [1. Load data into S3](#1-load-data-into-s3)
-        + [Download the raw data](#download-the-raw-data)
-        + [Configure S3 credentials](#configure-s3-credentials)
-        + [Build the Docker image](#build-the-docker-image)
-        + [Upload the data into S3](#upload-the-data-into-s3)
-    * [2. Initialize the database](#2-initialize-the-database)
-        + [Configure SQL credentials](#configure-sql-credentials)
-        + [Create the SQL database](#create-the-sql-database)
-        + [Test connection to the database](#test-connection-to-the-database)
+    * 0. Set environment variables and connect to the VPN
+    * 1. Acquire the data, land it in S3, and create the database
+    * 2. Clean the data, create features, and build the model
+- [Running the app step by step](#running-the-app-step-by-step)
+    * 1. Load data into S3
+    * 2. Initialize the database
 
 <!-- tocstop -->
 
@@ -92,13 +89,93 @@ increase in the number of users each month for the first six months.
 ```
 
 ## Running the app
+### 0. Set environment variables and connect to the VPN
+### 1. Acquire the data, land it in S3, and create the database
+### 2. Clean the data, create features, and build the model
+This section covers the fastest way to run the app.
+
+### 0. Set environment variables and connect to the VPN
+
+Set environment variables for AWS:
+```bash
+export AWS_ACCESS_KEY_ID="MY_ACCESS_KEY_ID"
+export AWS_SECRET_ACCESS_KEY="MY_SECRET_ACCESS_KEY"
+```
+
+Set environment variables for SQL:
+```bash
+export MYSQL_USER="MY_USERNAME"
+export MYSQL_PASSWORD="MY_PASSWORD"
+export MYSQL_HOST="MY_HOST"
+export MYSQL_PORT="MY_PORT"
+export DATABASE_NAME="MY_DATABASE"
+```
+
+Remember to connect to the Northwestern VPN to access the database!
+
+### 1. Upload the data to S3, download the data from S3, and create the database
+
+Build the image:
+```bash
+docker build -f app/Dockerfile_acquire -t hike-acquire .
+```
+
+This command will upload the raw data to S3, download the data from S3, and 
+create the SQL database.
+```bash
+docker run \
+    -e AWS_ACCESS_KEY_ID \
+    -e AWS_SECRET_ACCESS_KEY \
+    -e MYSQL_HOST \
+    -e MYSQL_PORT \
+    -e MYSQL_USER \
+    -e MYSQL_PASSWORD \
+    -e DATABASE_NAME \
+    --mount type=bind,source="$(pwd)/data",target=/app/data/ \
+    hike-acquire run_acquire.sh
+```
+
+### 2. Clean the data, create features, and build the model
+
+Build the image:
+```bash
+docker build -f app/Dockerfile_pipeline -t hike-pipeline .
+```
+
+This command will clean the data, create features for modeling, and build a
+random forest classification model.
+```bash
+docker run \
+    --mount type=bind,source="$(pwd)/",target=/app/ \
+    hike-pipeline run_pipeline.sh
+```
+
+### 3. Run the app
+
+Build the image:
+```bash
+docker build -f app/Dockerfile -t hike .
+```
+
+This command will run the app. You can access the app at http://0.0.0.0:5000/
+in your browser.
+```bash
+docker run -e SQLALCHEMY_DATABASE_URI -p 5000:5000 --name test hike app.py
+```
+
+When you're done with the app, run to stop the container:
+```bash
+docker rm test
+```
+
+## Running the app step by step
 
 ### 1. Load data into S3
 
 #### Download the raw data
 
 The dataset is from Kaggle and can be downloaded [here](https://www.kaggle.com/planejane/national-park-trails). You will
-need to create a Kaggle account to access the data. A copy of the dataset is located in
+need to create a Kaggle account to access the data. Alternatively, acopy of the dataset is located in
 `data/raw/national-park-trails.csv`.
 
 #### Configure S3 credentials
@@ -223,7 +300,7 @@ http://0.0.0.0:5000/
 ```
 
 
-4. Docker command Data acquisition / landing in S3 (upload and download), creating RDS, running app
+Docker command Data acquisition / landing in S3 (upload and download), creating RDS, running app
 ```bash
 docker build -f app/Dockerfile_acquire -t hike-acquire .
 docker run \
@@ -234,6 +311,7 @@ docker run \
     -e MYSQL_USER \
     -e MYSQL_PASSWORD \
     -e DATABASE_NAME \
+    -e SQLALCHEMY_DATABASE_URI \
     --mount type=bind,source="$(pwd)/data",target=/app/data/ \
     hike-acquire run_acquire.sh
 ```
@@ -250,6 +328,17 @@ Docker for running app
 ```bash
 docker build -f app/Dockerfile -t hike .
 docker run -p 5000:5000 --name test hike app.py
+
+docker run -e SQLALCHEMY_DATABASE_URI="mysql+pymysql://msia423instructor:clc3780@nw-msia423-clc3780.cbqlcxzmovlx.us-east-1.rds.amazonaws.com:3306/msia423_db" -p 5000:5000 hike app.py
 ```
 http://0.0.0.0:5000/
+when youre done with the app run
+```bash
+docker rm test
+```
+
+Docker for running tests
+```bash
+docker run hike -m pytest
+```
 
