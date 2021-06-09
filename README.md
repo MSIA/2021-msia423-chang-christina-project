@@ -9,19 +9,19 @@ QA: Matt Ko
 - [Project charter](#project-charter)
 - [Directory structure](#directory-structure)
 - [Running the app](#running-the-app)
-    * 0. Set environment variables and connect to the VPN
-    * 1. Acquire the data, land it in S3, and create the database
-    * 2. Clean the data, create features, and build the model
-    * 3. Run the app
-    * 4. Run unit tests
+    1. Set environment variables and connect to the VPN
+    2. Acquire the data, land it in S3, and create the database
+    3. Clean the data, create features, and build the model
+    4. Run the app
+    5. Run unit tests
 - [Running the app step by step](#running-the-app-step-by-step)
-    * 1. Load data into S3
-    * 2. Initialize the database
-    * 3. Clean the data
-    * 4. Create features
-    * 5. Train the model
-    * 6. Run the app
-    * 7. Run unit tests
+    1. Load data into S3
+    2. Initialize the database
+    3. Clean the data
+    4. Create features
+    5. Train the model
+    6. Run the app
+    7. Run unit tests
 
 <!-- tocstop -->
 
@@ -99,7 +99,7 @@ increase in the number of users each month for the first six months.
 
 This section covers the fastest way to run the app.
 
-### 0. Set environment variables and connect to the VPN
+### 1. Set environment variables and connect to the VPN
 
 Set environment variables for AWS:
 ```bash
@@ -118,7 +118,7 @@ export DATABASE_NAME="MY_DATABASE"
 
 Remember to connect to the Northwestern VPN to access the database!
 
-### 1. Upload the data to S3, download the data from S3, and create the database
+### 2. Upload the data to S3, download the data from S3, and create the database
 
 Build the image:
 ```bash
@@ -140,7 +140,7 @@ docker run \
     hike-acquire run_acquire.sh
 ```
 
-### 2. Clean the data, create features, and build the model
+### 3. Clean the data, create features, and build the model
 
 Build the image:
 ```bash
@@ -153,7 +153,7 @@ random forest classification model.
 docker run --mount type=bind,source="$(pwd)/",target=/app/ hike-pipeline run_pipeline.sh
 ```
 
-### 3. Run the app
+### 4. Run the app
 
 Build the image:
 ```bash
@@ -171,7 +171,7 @@ When you're done with the app, run the following command to stop the container:
 docker rm test
 ```
 
-### 4. Run unit tests
+### 5. Run unit tests
 
 This command will run units tests.
 ```bash
