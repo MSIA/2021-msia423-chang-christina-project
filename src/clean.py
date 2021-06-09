@@ -1,5 +1,6 @@
 import logging.config
 
+import numpy as np
 import pandas as pd
 
 logger = logging.getLogger(__name__)
@@ -20,8 +21,16 @@ def yards_to_miles(df, column_name, digits):
     """
 
     # Divide yards by 1760 to get miles
-    df[column_name] = round(df[column_name] / 1760, digits)
-    return df
+    try:
+        df[column_name] = round(df[column_name] / 1760, digits)
+        logger.info("Successfully converted yards to miles for %s", column_name)
+        return df
+    except KeyError as e:
+        logger.info("Could not convert %s from yards to miles", column_name)
+        logger.error("Please make sure the column_name is in the dataframe")
+    except TypeError as e:
+        logger.info("Could not convert %s from yards to miles", column_name)
+        logger.error("Please make sure inputs have correct types")
 
 
 def df_drop_str(df, column_name, drop_str):
@@ -36,7 +45,29 @@ def df_drop_str(df, column_name, drop_str):
             df (:obj:`pandas.DataFrame`): dataframe where rows were dropped
             if they contained drop_str
     """
-    df_drop = df[~df[column_name].str.lower().str.contains(drop_str)]
+    df_rows = np.shape(df)[0]
+
+    # Drop rows that contain the drop str in the specified column
+    try:
+        df_drop = df[~df[column_name].str.lower().str.contains(drop_str)]
+    except KeyError as e:
+        logger.info("Could not convert %s from yards to miles", column_name)
+        logger.error("Please make sure the column_name is in the dataframe")
+    except TypeError as e:
+        logger.info("Could not convert %s from yards to miles", column_name)
+        logger.error("Please make sure inputs have correct types")
+
+    df_rows_drop = np.shape(df_drop)[0]
+
+    # Log how many rows were dropped
+    num_dropped = df_rows_drop - df_rows
+
+    if num_dropped != 0:
+        logger.warning("Dropped %s rows from the data", num_dropped)
+
+    logger.info("The data has %s rows after filtering the drop string",
+                np.shape(df_drop)[0])
+
     return df_drop
 
 
@@ -54,7 +85,14 @@ def clean(raw_data_path, length_col, digits, name_col, drop_str, clean_path):
         Returns:
             df (:obj:`pandas.DataFrame`): cleaned dataframe
     """
-    df = pd.read_csv(raw_data_path)
+    try:
+        df = pd.read_csv(raw_data_path)
+        logger.debug("File successfully read")
+    except FileNotFoundError as e:
+        logger.error("File could not be found. Please make sure the path is"
+                     "correct.")
+
+    # Convert yards to miles and filter the rows
     df_clean = yards_to_miles(df, length_col, digits)
     df_clean = df_drop_str(df_clean, name_col, drop_str)
 
