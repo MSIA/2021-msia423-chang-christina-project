@@ -89,9 +89,7 @@ increase in the number of users each month for the first six months.
 ```
 
 ## Running the app
-### 0. Set environment variables and connect to the VPN
-### 1. Acquire the data, land it in S3, and create the database
-### 2. Clean the data, create features, and build the model
+
 This section covers the fastest way to run the app.
 
 ### 0. Set environment variables and connect to the VPN
