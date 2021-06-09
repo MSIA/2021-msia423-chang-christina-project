@@ -24,11 +24,7 @@ def one_hot_encode(df, trail_id, tag_features, non_tag_features, response):
             categorical variables are one hot encoded
     """
     # Get column names of categorical and numerical variables
-    try:
-        df_features = df[non_tag_features]
-    except KeyError as e:
-        logger.error("Please make sure %s are columns in the data",
-                     non_tag_features)
+    df_features = df[non_tag_features]
     cat_names = df_features.select_dtypes(include='object').columns
     num_names = df_features.select_dtypes(include=np.number).columns
 
@@ -38,13 +34,9 @@ def one_hot_encode(df, trail_id, tag_features, non_tag_features, response):
     logger.debug("One hot encoded features created.")
 
     # Concatenate encoded columns to numerical columns, and tag features
-    try:
-        df_enc = pd.concat([df[trail_id], df_features[num_names], enc_columns,
-                            df[tag_features], df[response]], axis=1)
-        logger.info("One hot encoded features appended to the data")
-    except KeyError as e:
-        logger.error("Please make sure columns are in the dataframe")
-
+    df_enc = pd.concat([df[trail_id], df_features[num_names], enc_columns,
+                        df[tag_features], df[response]], axis=1)
+    logger.info("One hot encoded features appended to the data")
     return df_enc
 
 

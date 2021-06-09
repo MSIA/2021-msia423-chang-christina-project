@@ -21,16 +21,9 @@ def yards_to_miles(df, column_name, digits):
     """
 
     # Divide yards by 1760 to get miles
-    try:
-        df[column_name] = round(df[column_name] / 1760, digits)
-        logger.info("Successfully converted yards to miles for %s", column_name)
-        return df
-    except KeyError as e:
-        logger.info("Could not convert %s from yards to miles", column_name)
-        logger.error("Please make sure the column_name is in the dataframe")
-    except TypeError as e:
-        logger.info("Could not convert %s from yards to miles", column_name)
-        logger.error("Please make sure inputs have correct types")
+    df[column_name] = round(df[column_name] / 1760, digits)
+    logger.info("Successfully converted yards to miles for %s", column_name)
+    return df
 
 
 def df_drop_str(df, column_name, drop_str):
@@ -45,18 +38,13 @@ def df_drop_str(df, column_name, drop_str):
             df (:obj:`pandas.DataFrame`): dataframe where rows were dropped
             if they contained drop_str
     """
-    df_rows = np.shape(df)[0]
+    try:
+        df_rows = np.shape(df)[0]
+    except IndexError as e:
+        logger.error("Cannot get number of rows in dataframe")
 
     # Drop rows that contain the drop str in the specified column
-    try:
-        df_drop = df[~df[column_name].str.lower().str.contains(drop_str)]
-    except KeyError as e:
-        logger.info("Could not convert %s from yards to miles", column_name)
-        logger.error("Please make sure the column_name is in the dataframe")
-    except TypeError as e:
-        logger.info("Could not convert %s from yards to miles", column_name)
-        logger.error("Please make sure inputs have correct types")
-
+    df_drop = df[~df[column_name].str.lower().str.contains(drop_str)]
     df_rows_drop = np.shape(df_drop)[0]
 
     # Log how many rows were dropped
