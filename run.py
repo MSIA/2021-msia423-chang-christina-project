@@ -4,17 +4,14 @@
 import argparse
 import logging
 
-import pandas as pd
 import yaml
 
-from config.flaskconfig import SQLALCHEMY_DATABASE_URI
-from src.s3 import upload_file_to_s3, download_file_from_s3
-from src.create_db import create_db, insert_all
 import src.clean as clean
 import src.featurize as featurize
 import src.model as model
-
-import src.recommend as recommend
+from config.flaskconfig import SQLALCHEMY_DATABASE_URI
+from src.create_db import create_db, insert_all
+from src.s3 import upload_file_to_s3, download_file_from_s3
 
 logging.config.fileConfig('config/logging/local.conf',
                           disable_existing_loggers=False)
@@ -47,7 +44,7 @@ sb_s3_download.add_argument('--s3path', required=True, help='Path to S3')
 sb_create = subparsers.add_parser('create_db', description='Create database')
 sb_create.add_argument('--engine_string', default=SQLALCHEMY_DATABASE_URI,
                        help='SQLAlchemy connection URI for database')
-sb_create.add_argument('--data_path',  help='Insert data into database')
+sb_create.add_argument('--data_path', help='Insert data into database')
 
 # Sub-parser for the rest of the pipeline
 sb_clean = subparsers.add_parser('clean', description='Clean data')
@@ -57,7 +54,6 @@ sb_model = subparsers.add_parser('model', description='Run model')
 # Get parser
 args = parser.parse_args()
 sp_used = args.subparser_name
-
 
 if __name__ == '__main__':
 
