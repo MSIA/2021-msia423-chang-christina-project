@@ -10,8 +10,8 @@ QA: Matt Ko
 - [Directory structure](#directory-structure)
 - [Running the app](#running-the-app)
     1. Set environment variables and connect to the VPN
-    2. Acquire the data, land it in S3, and create the database
-    3. Clean the data, create features, and build the model
+    2. Upload the data to S3 and create the database
+    3. Download the data from S3, clean the data, create features, and build the model
     4. Run the app
     5. Run unit tests
 - [Running the app step by step](#running-the-app-step-by-step)
@@ -118,7 +118,7 @@ export DATABASE_NAME="MY_DATABASE"
 
 Remember to connect to the Northwestern VPN to access the database!
 
-### 2. Upload the data to S3, download the data from S3, and create the database
+### 2. Upload the data to S3 and create the database
 
 Build the image:
 ```bash
@@ -140,30 +140,34 @@ docker run \
     hike-acquire run_acquire.sh
 ```
 
-### 3. Clean the data, create features, and build the model
+### 3. Download the data from S3, clean the data, create features, and build the model
 
 Build the image:
 ```bash
-docker build -f app/Dockerfile_pipeline -t hike-pipeline .
+docker build -f app/Dockerfile_pipeline -t hike-pipeline-clc3780 .
 ```
 
 This command will clean the data, create features for modeling, and build a
 random forest classification model.
 ```bash
-docker run --mount type=bind,source="$(pwd)/",target=/app/ hike-pipeline run_pipeline.sh
+docker run \
+    -e AWS_ACCESS_KEY_ID \
+    -e AWS_SECRET_ACCESS_KEY \
+    --mount type=bind,source="$(pwd)/",target=/app/ \
+    hike-pipeline-clc3780 run_pipeline.sh
 ```
 
 ### 4. Run the app
 
 Build the image:
 ```bash
-docker build -f app/Dockerfile -t hike .
+docker build -f app/Dockerfile -t hike-clc3780 .
 ```
 
 This command will run the app. You can access the app at http://0.0.0.0:5000/
 in your browser.
 ```bash
-docker run -e SQLALCHEMY_DATABASE_URI -p 5000:5000 --name test hike app.py
+docker run -e SQLALCHEMY_DATABASE_URI -p 5000:5000 --name test hike-clc3780 app.py
 ```
 
 When you're done with the app, run the following command to stop the container:
@@ -175,7 +179,7 @@ docker rm test
 
 This command will run units tests.
 ```bash
-docker run hike -m pytest
+docker run hike-clc3780 -m pytest
 ```
 
 ## Running the app step by step
