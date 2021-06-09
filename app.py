@@ -32,6 +32,7 @@ trail_manager = TrailManager(app)
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
+    """Main page of the application"""
     if request.method == 'GET':
         try:
             return render_template('index.html')
@@ -74,6 +75,7 @@ def home():
 @app.route('/my_template/<length>/<elevation_gain>/<route_type>/<features>/'
            '<activities>', methods=['GET', 'POST'])
 def my_template(length, elevation_gain, route_type, features, activities):
+    """Web page template for the results page."""
     if request.method == 'GET':
 
         # Add to database
