@@ -16,23 +16,31 @@ import src.model as model
 
 import src.recommend as recommend
 
-logging.config.fileConfig('config/logging/local.conf', disable_existing_loggers=False)
+logging.config.fileConfig('config/logging/local.conf',
+                          disable_existing_loggers=False)
 logger = logging.getLogger(__name__)
 
 # Create parser
-parser = argparse.ArgumentParser(description='Create database or upload data to S3')
-parser.add_argument('--config', default='config/project.yaml', help='Path to configuration file')
+parser = argparse.ArgumentParser(description=
+                                 'Create database or upload data to S3')
+parser.add_argument('--config', default='config/project.yaml',
+                    help='Path to configuration file')
 subparsers = parser.add_subparsers(dest='subparser_name')
 
 # Sub-parser for uploading data to S3 bucket
-sb_s3_upload = subparsers.add_parser('s3_upload', description='Upload data to S3')
-sb_s3_upload.add_argument('--s3path', required=True, help='Where to load data to in S3')
-sb_s3_upload.add_argument('--local_path', default='./data/raw/national-park-trails.csv',
+sb_s3_upload = subparsers.add_parser('s3_upload',
+                                     description='Upload data to S3')
+sb_s3_upload.add_argument('--s3path', required=True,
+                          help='Where to load data to in S3')
+sb_s3_upload.add_argument('--local_path',
+                          default='./data/raw/national-park-trails.csv',
                           help='Where data exists in local')
 
 # sub-parser for download data to S3 bucket
-sb_s3_download = subparsers.add_parser('s3_download', description='Download data from S3')
-sb_s3_download.add_argument('--local_path', required=True, help='Where to download in local')
+sb_s3_download = subparsers.add_parser('s3_download',
+                                       description='Download data from S3')
+sb_s3_download.add_argument('--local_path', required=True,
+                            help='Where to download in local')
 sb_s3_download.add_argument('--s3path', required=True, help='Path to S3')
 
 # Sub-parser for creating a database
@@ -45,8 +53,6 @@ sb_create.add_argument('--data_path',  help='Insert data into database')
 sb_clean = subparsers.add_parser('clean', description='Clean data')
 sb_featurize = subparsers.add_parser('featurize', description='Create features')
 sb_model = subparsers.add_parser('model', description='Run model')
-sb_predict = subparsers.add_parser('predict', description='Predicting user input')
-# sb_recommend = subparsers.add_parser('recommend', description='Make recommendations from user input')
 
 # Get parser
 args = parser.parse_args()
@@ -74,11 +80,5 @@ if __name__ == '__main__':
         featurize.featurize(**config['featurize']['featurize'])
     elif sp_used == 'model':
         model.model(**config['model']['model'])
-    elif sp_used == 'predict':
-        #model.model(**config['recommend']['predict'])
-        # length, elevation_gain, route_type, features, activities,
-        res = recommend.predict(5, 2, 'out_and_back', "['beach']", "['fishing']",
-                                **config['recommend']['predict'])
-        print(res)
     else:
         parser.print_help()
