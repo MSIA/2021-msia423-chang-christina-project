@@ -166,7 +166,7 @@ def featurize(clean_data_path, trail_id, tag_features, non_tag_features,
             featurize_path (str): location to save dataframe with features
 
         Returns:
-            df_featurize (:obj:`pandas.DataFrame`): ataframe with features
+            df_featurize (:obj:`pandas.DataFrame`): dataframe with features
 
     """
 
@@ -196,4 +196,3 @@ def featurize(clean_data_path, trail_id, tag_features, non_tag_features,
                 np.shape(df_featurize)[0], np.shape(df_featurize)[1])
 
     return df_featurize
-

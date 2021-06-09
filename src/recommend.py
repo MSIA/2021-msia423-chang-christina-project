@@ -1,12 +1,12 @@
 import logging.config
-
-import numpy as np
-import pandas as pd
 import pickle
 import re
 
+import numpy as np
+import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.preprocessing import StandardScaler
+
 logger = logging.getLogger(__name__)
 
 
@@ -30,6 +30,7 @@ def input_tag_ohe(feature_name, full_tag_ls, tag_input):
     # Append to column name
     df_split.columns = feature_name + '_' + df_split.columns
     tag_ohe = df_split.iloc[1, :]
+    logger.debug("User input for %s successfully one hot encoded", feature_name)
 
     return tag_ohe
 
@@ -47,7 +48,10 @@ def column_ohe(df, column_name, col_input):
 
     """
     # Returns series for one hot encoded values
-    full_value_ls = list(df[column_name].unique())
+    try:
+        full_value_ls = list(df[column_name].unique())
+    except KeyError as e:
+        logger.error("Please make sure %s is in the dataframe", column_name)
     full_value_ls = [i.replace(' ', '_') for i in full_value_ls]
     split_series = pd.Series([full_value_ls, [col_input]])
     df_split = split_series.str.join('|').str.get_dummies()
@@ -55,6 +59,7 @@ def column_ohe(df, column_name, col_input):
 
     # Drop column for first unique value
     ohe_res = df_split.iloc[1, 1:]
+    logger.info("User input for %s successfully one hot encoded", column_name)
 
     return ohe_res
 
@@ -85,6 +90,7 @@ def collect_input(length_input, elevation_gain_input, route_type_input,
                   'route_type': route_type_input,
                   'features': features_input,
                   'activities': activities_input}
+    logger.debug("User input converted to dictionary")
 
     return input_dict
 
@@ -124,6 +130,8 @@ def create_input_features(features_name, full_features_ls,
     activities_ohe = input_tag_ohe(activities_name, full_activities_ls,
                                    activities_input)
     route_type_ohe = column_ohe(df, route_type, route_type_input)
+    logger.info("All tags and categorical features successfully one hot"
+                "encoded")
 
     # Numerical inputs
     num_features = pd.Series({'length': length_input,
@@ -132,6 +140,7 @@ def create_input_features(features_name, full_features_ls,
     # Create input vector
     input_vector = pd.concat([num_features, route_type_ohe, features_ohe,
                               activities_ohe])
+    logger.info("User input successfully converted to featurized vector")
 
     return input_vector
 
@@ -153,6 +162,7 @@ def scaled_cosine_sim(df):
 
     # Calculate distance
     cs = cosine_similarity(df_scaled)
+    logger.info("Cosine similarity matrix created")
 
     return cs
 
@@ -185,6 +195,7 @@ def recommend_trails(n, df_features, trail_id, response, input_vector):
 
     # Calculate distance
     cs = scaled_cosine_sim(input_dist)
+    logger.debug("Cosine similarity calculated against user input")
 
     # Get similarities for the new input
     sim_vec = cs[0, :]
@@ -194,6 +205,7 @@ def recommend_trails(n, df_features, trail_id, response, input_vector):
 
     # Get the trail id using the index
     most_sim_id = list(input_matrix_ind[sim_ind])
+    logger.info("%s most similar trail ids found", n)
 
     return most_sim_id
 
@@ -202,7 +214,7 @@ def predict_difficulty(input_vector, model_path):
     """Predict the difficulty of a trail
 
         Args:
-            input_vector (`panads.Series`): series of user inputs
+            input_vector (`pandas.Series`): series of user inputs
             model_path (str): path to model
 
         Returns:
@@ -211,8 +223,13 @@ def predict_difficulty(input_vector, model_path):
     """
     # Make prediction
     input_arr = np.array(input_vector).reshape(1, -1)
-    model = pickle.load(open(model_path, 'rb'))
+    try:
+        model = pickle.load(open(model_path, 'rb'))
+    except FileNotFoundError as e:
+        logger.error("Model file not found. Please make sure path is correct.")
+
     pred = model.predict(input_arr)[0]
+    logger.info("Model made prediction on user input")
 
     return pred
 
@@ -224,13 +241,23 @@ def predict(length_input, elevation_gain_input, route_type_input,
             model_path):
     """Make a prediction on trail difficulty based on user inputs."""
 
-    df = pd.read_csv(clean_data_path)
+    try:
+        df = pd.read_csv(clean_data_path)
+    except FileNotFoundError as e:
+        logger.error("Clean data not found. Please make sure file path is"
+                     "correct.")
 
-    with open(full_features_ls_path) as f:
-        full_features_ls = [line.rstrip() for line in f]
+    try:
+        with open(full_features_ls_path) as f:
+            full_features_ls = [line.rstrip() for line in f]
+    except FileNotFoundError as e:
+        logger.error("Features list file not found")
 
-    with open(full_activities_ls_path) as f:
-        full_activities_ls = [line.rstrip() for line in f]
+    try:
+        with open(full_activities_ls_path) as f:
+            full_activities_ls = [line.rstrip() for line in f]
+    except FileNotFoundError as e:
+        logger.error("Activities list file not found")
 
     dict_input = collect_input(length_input, elevation_gain_input,
                                route_type_input, features_input,
@@ -247,12 +274,20 @@ def recommend(length_input, elevation_gain_input, route_type_input,
               features_input, activities_input,
               features_name, full_features_ls_path, activities_name,
               full_activities_ls_path, clean_data_path,
-              route_type, n, featurize_path, trail_id, response,
-              display_feature_list):
+              route_type, n, featurize_path, trail_id, response):
     """Provide top n recommendations on most similar trails."""
 
-    df = pd.read_csv(clean_data_path)
-    df_features = pd.read_csv(featurize_path)
+    try:
+        df = pd.read_csv(clean_data_path)
+    except FileNotFoundError as e:
+        logger.error("Clean data file not found. Please make sure path is"
+                     "correct")
+
+    try:
+        df_features = pd.read_csv(featurize_path)
+    except FileNotFoundError as e:
+        logger.error("Featurized data not found. Please make sure path is"
+                     "correct")
 
     with open(full_features_ls_path) as f:
         full_features_ls = [line.rstrip() for line in f]
