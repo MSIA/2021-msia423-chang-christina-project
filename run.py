@@ -37,6 +37,7 @@ sb_s3_upload.add_argument('--local_path',
 sb_s3_download = subparsers.add_parser('s3_download',
                                        description='Download data from S3')
 sb_s3_download.add_argument('--local_path', required=True,
+                            default='./data/raw/national-park-trails.csv',
                             help='Where to download in local')
 sb_s3_download.add_argument('--s3path', required=True, help='Path to S3')
 
