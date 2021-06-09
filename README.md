@@ -143,9 +143,7 @@ docker build -f app/Dockerfile_pipeline -t hike-pipeline .
 This command will clean the data, create features for modeling, and build a
 random forest classification model.
 ```bash
-docker run \
-    --mount type=bind,source="$(pwd)/",target=/app/ \
-    hike-pipeline run_pipeline.sh
+docker run --mount type=bind,source="$(pwd)/",target=/app/ hike-pipeline run_pipeline.sh
 ```
 
 ### 3. Run the app
@@ -161,7 +159,7 @@ in your browser.
 docker run -e SQLALCHEMY_DATABASE_URI -p 5000:5000 --name test hike app.py
 ```
 
-When you're done with the app, run to stop the container:
+When you're done with the app, run the following command to stop the container:
 ```bash
 docker rm test
 ```
