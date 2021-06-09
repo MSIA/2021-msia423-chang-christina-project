@@ -12,9 +12,16 @@ QA: Matt Ko
     * 0. Set environment variables and connect to the VPN
     * 1. Acquire the data, land it in S3, and create the database
     * 2. Clean the data, create features, and build the model
+    * 3. Run the app
+    * 4. Run unit tests
 - [Running the app step by step](#running-the-app-step-by-step)
     * 1. Load data into S3
     * 2. Initialize the database
+    * 3. Clean the data
+    * 4. Create features
+    * 5. Train the model
+    * 6. Run the app
+    * 7. Run unit tests
 
 <!-- tocstop -->
 
@@ -164,6 +171,13 @@ When you're done with the app, run the following command to stop the container:
 docker rm test
 ```
 
+### 4. Run unit tests
+
+This command will run units tests.
+```bash
+docker run hike -m pytest
+```
+
 ## Running the app step by step
 
 ### 1. Load data into S3
@@ -203,6 +217,18 @@ docker run \
 ```
 
 This command uploads a CSV file from the specified `--local_path` to the S3 bucket. The `--s3path` is a required 
+argument. By default, the `local_path` is set to `data/raw/national-park-trails.csv`.
+
+### Download the data from S3
+
+```bash
+docker run \
+    -e AWS_ACCESS_KEY_ID \
+    -e AWS_SECRET_ACCESS_KEY \
+    hike run.py s3_download --s3path <your_s3_path> --local_path <your_local_path>
+```
+
+This command downloads a CSV file from the specified S3 bucket to the `--local_path`. The `--s3path` is a required 
 argument. By default, the `local_path` is set to `data/raw/national-park-trails.csv`.
 
 ### 2. Initialize the database
@@ -265,7 +291,37 @@ You can also see other tables in the database using:
 show tables;
 ```
 
-### 3. Docker commands entire pipeline (rewrite)
+### 3. Clean the data
+```bash
+docker run --mount type=bind,source="$(pwd)/data/",target=/app/data/ hike run.py clean
+```
+
+### 4. Create features
+```bash
+docker run --mount type=bind,source="$(pwd)/data/",target=/app/data/ hike run.py featurize
+```
+
+### 5. Train the model
+```bash
+docker run --mount type=bind,source="$(pwd)/",target=/app/ hike run.py model
+```
+
+### 6. Run the app
+```bash
+docker run -p 5000:5000 --name test hike app.py
+```
+
+### 7. Run unit tests
+```bash
+docker run hike -m pytest
+```
+
+
+
+
+
+
+
 ```bash
 docker build -f app/Dockerfile -t hike .
 docker run \
