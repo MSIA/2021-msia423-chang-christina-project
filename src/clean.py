@@ -60,7 +60,7 @@ def df_drop_str(df, column_name, drop_str):
     df_rows_drop = np.shape(df_drop)[0]
 
     # Log how many rows were dropped
-    num_dropped = df_rows_drop - df_rows
+    num_dropped = df_rows - df_rows_drop
 
     if num_dropped != 0:
         logger.warning("Dropped %s rows from the data", num_dropped)
