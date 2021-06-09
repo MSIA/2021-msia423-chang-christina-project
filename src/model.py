@@ -112,7 +112,6 @@ def model(featurize_path, trail_id, response,
           test_size, random_state_split, random_state_model,
           model_path, x_test_path, y_test_path,
           cv, scoring, cm_labels, output_path):
-
     """Build a random forest model and evaluate the model."""
 
     # Read featurize data
