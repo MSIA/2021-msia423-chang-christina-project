@@ -72,4 +72,3 @@ recommend:
     featurize_path: data/models/df_featurize.csv
     trail_id: trail_id
     response: difficulty_class
-    display_feature_list: ['name', 'area_name', 'city_name', 'state_name', 'length', 'elevation_gain', 'route_type']
