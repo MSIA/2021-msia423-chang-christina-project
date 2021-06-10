@@ -79,8 +79,7 @@ increase in the number of users each month for the first six months.
 │
 ├── notebooks/
 │   ├── archive/                      <- Develop notebooks no longer being used.
-│   ├── develop/                      <- Current notebooks being used in development.
-│   ├── template.ipynb                <- Template notebook for analysis with useful imports, helper functions, and SQLAlchemy setup. 
+│   ├── develop/                      <- Current notebooks being used in development. 
 │
 ├── src/                              <- Source data for the project 
 │
