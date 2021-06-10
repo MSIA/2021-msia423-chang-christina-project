@@ -1,4 +1,4 @@
-# MSiA423 Project Repository
+# Take a Hike: A National Park Trail Recommender
 
 Author: Christina Chang
 
@@ -63,9 +63,9 @@ increase in the number of users each month for the first six months.
 │   ├── Dockerfile_pipeline           <- Dockerfile for building image to run the pipeline
 │
 ├── config                            <- Directory for configuration files 
-│   ├── local/                        <- Directory for keeping environment variables and other local configurations that *do not sync** to Github 
 │   ├── logging/                      <- Configuration of python loggers
 │   ├── flaskconfig.py                <- Configurations for Flask API 
+│   ├── project.yaml                  <- Web app YAML file
 │
 ├── copilot                           <- Directory for copilot, which deploys the Flask app
 │
