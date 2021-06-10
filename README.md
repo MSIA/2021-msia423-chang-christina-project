@@ -123,8 +123,7 @@ Build the image:
 docker build -f app/Dockerfile_acquire -t hike-acquire .
 ```
 
-This command will upload the raw data to S3, download the data from S3, and 
-create the SQL database.
+This command will upload the raw data to S3 and create the SQL database.
 ```bash
 docker run \
     -e AWS_ACCESS_KEY_ID \
@@ -145,8 +144,8 @@ Build the image:
 docker build -f app/Dockerfile_pipeline -t hike-pipeline-clc3780 .
 ```
 
-This command will clean the data, create features for modeling, and build a
-random forest classification model.
+This command will download the data from S3, clean the data, create features for
+modeling, and build a random forest classification model.
 ```bash
 docker run \
     -e AWS_ACCESS_KEY_ID \
