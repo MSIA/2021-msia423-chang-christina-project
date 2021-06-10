@@ -65,7 +65,6 @@ def home():
                              "numeric")
                 return render_template('error.html')
 
-
             return redirect(url_for_post)
         except:
             return render_template('error.html')
@@ -95,9 +94,9 @@ def my_template(length, elevation_gain, route_type, features, activities):
         logger.debug("Web app successfully used recommendation function")
 
         try:
-            trails = trail_manager.session.query(Trails)\
-                    .filter(Trails.trail_id.in_(recommend_ids))\
-                    .order_by(Trails.length)
+            trails = trail_manager.session.query(Trails) \
+                .filter(Trails.trail_id.in_(recommend_ids)) \
+                .order_by(Trails.length)
             logger.debug("Web app successfully queried from database")
             logger.debug("Index page accessed")
             return render_template('result.html', prediction=prediction,

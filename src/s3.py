@@ -44,7 +44,8 @@ def upload_file_to_s3(local_path, s3path):
         logger.debug('Uploading data to S3.')
         bucket.upload_file(local_path, s3_just_path)
     except botocore.exceptions.NoCredentialsError:
-        logger.error('Please provide AWS credentials via AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY env variables.')
+        logger.error('Please provide AWS credentials via AWS_ACCESS_KEY_ID and '
+                     'AWS_SECRET_ACCESS_KEY env variables.')
     except boto3.exceptions.S3UploadFailedError:
         logger.error("Please provide a valid S3 bucket name.")
     else:
@@ -52,7 +53,15 @@ def upload_file_to_s3(local_path, s3path):
 
 
 def download_file_from_s3(local_path, s3path):
+    """Downloads a file from local to the specified S3 path.
 
+    Args:
+        local_path (str): local path to save file
+        s3path (str): path to the S3
+
+    Returns:
+        None
+    """
     s3bucket, s3_just_path = parse_s3(s3path)
 
     s3 = boto3.resource("s3")
@@ -61,6 +70,7 @@ def download_file_from_s3(local_path, s3path):
     try:
         bucket.download_file(s3_just_path, local_path)
     except botocore.exceptions.NoCredentialsError:
-        logger.error('Please provide AWS credentials via AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY env variables.')
+        logger.error('Please provide AWS credentials via AWS_ACCESS_KEY_ID and '
+                     'AWS_SECRET_ACCESS_KEY env variables.')
     else:
         logger.info('Data downloaded from %s to %s', s3path, local_path)

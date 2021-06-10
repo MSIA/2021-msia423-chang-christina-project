@@ -40,7 +40,7 @@ def train(df, trail_id, response, test_size, random_state_split,
 
     # Train, test, split
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=
-                                                        test_size, random_state=
+    test_size, random_state=
                                                         random_state_split)
     logger.info("Data successfully split into train and test")
 
